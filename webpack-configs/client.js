@@ -22,7 +22,7 @@ module.exports = {
     path: Path.resolve('./public'),
     filename: 'javascripts/main.js'
   },
-  devtool: isProduction ? 'source-map' : 'nosources-source-map',
+  devtool: isProduction ? 'nosources-source-map' : 'source-map',
   module: {
     rules: [
       {
@@ -65,6 +65,6 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('stylesheets/main.css'),
-    // isProduction && new UglifyJSPlugin(),
+    isProduction && new UglifyJSPlugin(),
   ].filter(e => !!e),
 };
