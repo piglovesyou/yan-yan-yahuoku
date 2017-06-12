@@ -1,21 +1,25 @@
+@import "../../sass/_base-layout"
+
 .root
-  flex: 1
-  display: flex
+  @extend %l-flex-expand
+  @extend %l-flex-container
+
+.main-viewport
+  @extend %l-flex-expand
+  @extend %l-flex-container
   flex-direction: column
-
-.main-content
   min-height: 0 !important
-  background-color: lightcoral
+  background-color: lightblue !important
 
-.layout-master-detail
-  flex: 1
-  display: flex
+.master-detail
+  @extend %l-flex-expand
+  @extend %l-flex-container
   &__master
     width: 120px
   &__detail
     flex: 1
-.layout-master-detail__master
+.master-detail__master
   width: 144px
-.layout-master-detail__detail
+.master-detail__detail
   flex: 1
   padding-left: 16px

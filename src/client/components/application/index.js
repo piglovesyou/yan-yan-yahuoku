@@ -10,6 +10,12 @@ const s = require('./index.sass');
 const {Sidebar, Icon, Menu, Segment} = require('semantic-ui-react');
 
 class Application extends React.Component {
+  constructor(props) {
+    super(props);
+    this.toggleSidemenu = this.toggleSidemenu.bind(this);
+    this.closeSidemenu = this.closeSidemenu.bind(this);
+  }
+
   static getStores() {
     return [Store];
   }
@@ -21,7 +27,6 @@ class Application extends React.Component {
   render() {
     return (
         <Sidebar.Pushable as={Segment} className={s.root}>
-
           <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
                    vertical inverted>
             <Menu.Item name='home'>
@@ -38,12 +43,15 @@ class Application extends React.Component {
             </Menu.Item>
           </Sidebar>
 
-          <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu.bind(this)}/>
+          <Sidebar.Pusher dimmed={this.state.isSidebarVisible}
+                          className={s.mainViewport}
+                          onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
+          >
+            <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu}/>
 
-          <Sidebar.Pusher className={s.mainContent}>
-            <div className={s.layoutMasterDetail}>
-              <Navigation className={s.layoutMasterDetailMaster}/>
-              <div className={s.layoutMasterDetailDetail}>
+            <div className={s.masterDetail}>
+              <Navigation className={s.masterDetailMaster}/>
+              <div className={s.masterDetailDetail}>
                 <Route path='/' exact render={() => <Home {...this.state} />}/>
                 <Route path='/about' render={() => <About {...this.state} />}/>
               </div>
@@ -51,15 +59,15 @@ class Application extends React.Component {
           </Sidebar.Pusher>
 
         </Sidebar.Pushable>
-
     );
   }
 
   toggleSidemenu() {
-    console.log(this.state.isSidebarVisible);
-    this.setState({
-      isSidebarVisible: !this.state.isSidebarVisible
-    });
+    this.setState({isSidebarVisible: !this.state.isSidebarVisible});
+  }
+
+  closeSidemenu() {
+    this.setState({isSidebarVisible: false});
   }
 }
 

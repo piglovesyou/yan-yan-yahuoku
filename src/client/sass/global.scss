@@ -16,3 +16,7 @@
   @extend %l-flex-container;
   margin: 0;
 }
+
+:global([tabindex]) {
+  cursor: pointer;
+}
