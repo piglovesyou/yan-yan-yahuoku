@@ -1,8 +1,11 @@
+@import "../../sass/_base-layout"
+
 .root
-  background-color: ghostwhite
-$height: 64px
+  @extend %l-flex-container
+  padding: 16px
+
 .title
-  margin: 0
-  font-size: 24px
-  line-height: $height
-  padding: 0 24px
+  @extend %l-flex-expand
+  margin: 0 16px
+  line-height: 1
+
