@@ -1,0 +1,15 @@
+{
+  "presets": [
+    "react"
+  ],
+  "plugins": [
+    "transform-es2015-classes",
+    [
+      "babel-plugin-webpack-loaders",
+      {
+        "config": "./webpack-configs/server.js",
+        "verbose": false
+      }
+    ]
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "react-server-side-rendering-with-css-module",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "NODE_ENV=production node ./lib/main",
+    "dev": "BABEL_DISABLE_CACHE=1 nodemon --watch src/server -- ./src/main",
+    "test": "BABEL_DISABLE_CACHE=1 wdio wdio.conf.js",
+    "build:server": "BABEL_DISABLE_CACHE=1 babel -d lib src",
+    "build:client": "webpack --config webpack-configs/client.js",
+    "build": "npm run build:server && npm run build:client",
+    "prepublish": "NODE_ENV=production npm run build"
+  },
+  "engines": {
+    "node": "7.x"
+  },
+  "description": "React server-side rendering with CSS modules example",
+  "dependencies": {
+    "compression": "^1.6.2",
+    "deepmerge": "^1.3.2",
+    "express": "~4.15.3",
+    "morgan": "~1.8.2",
+    "react": "^15.2.0",
+    "react-dom": "^15.2.0",
+    "serve-favicon": "~2.4.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.7.2",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-async-to-generator": "^6.7.4",
+    "babel-plugin-transform-class-properties": "^6.6.0",
+    "babel-plugin-transform-es2015-classes": "^6.7.7",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.7.7",
+    "babel-plugin-webpack-loaders": "^0.9.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.5.0",
+    "babel-register": "^6.11.6",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "flux": "^3.1.2",
+    "node-sass": "^4.5.3",
+    "nodemon": "^1.10.2",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "sass-loader": "^6.0.5",
+    "semantic-ui-react": "^0.68.5",
+    "uglifyjs-webpack-plugin": "^0.4.3",
+    "wdio-mocha-framework": "^0.5.10",
+    "wdio-selenium-standalone-service": "0.0.8",
+    "webdriverio": "^4.2.3",
+    "webpack": "^2.6.1",
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-unassert-loader": "^1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piglovesyou/react-server-side-rendering-with-css-modules.git"
+  },
+  "license": "ISC"
+}
