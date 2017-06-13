@@ -7,12 +7,21 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../../webpack-configs/client');
 const middlewares = require('./middlewares').default;
+const passport = require('./passport').default;
+const session = require('express-session');
+const sessionStore = require('./session-store').default;
 
 const {isProduction} = require('./env');
 const app = express();
 app.set('port', normalizePort(process.env.PORT || '3000'));
 app.use(logger('dev'));
 app.use(favicon(Path.resolve(__dirname, '../../public/favicon.ico')));
+app.use(session({
+  store: sessionStore,
+  secret: process.env.SESSION_SECRET || 'baa',
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // import bodyParser from 'body-parser';
 // import cookieParser from 'cookie-parser';
@@ -23,13 +32,23 @@ app.use(favicon(Path.resolve(__dirname, '../../public/favicon.ico')));
 if (isProduction) {
   app.use(compression());
 } else {
-  Object.assign(webpackConfig.output, { path: '/' });
+  Object.assign(webpackConfig.output, {path: '/'});
   app.use(webpackDevMiddleware(webpack(webpackConfig), {}));
 }
 
 app.use(express.static(Path.join(__dirname, '../../public')));
 
 // Handle browser GET accesses
+app.get('/auth/yj',
+    passport.authenticate('yj', {
+      scope: 'openid profile email address',
+      nonce: parseInt((new Date) / 1000)
+    }));
+app.get('/auth/yj/callback',
+    passport.authenticate('yj', {
+      failureRedirect: '/login'
+    }),
+    (req, res) => res.redirect('/'));
 app.get('*', middlewares);
 
 // Handle 404

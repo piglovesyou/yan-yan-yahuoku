@@ -7,7 +7,7 @@ const Navigation = require('../navigation').default;
 const About = require('../about').default;
 const Home = require('../home').default;
 const s = require('./index.sass');
-const {Sidebar, Icon, Menu, Segment} = require('semantic-ui-react');
+const {Sidebar, Icon, Menu} = require('semantic-ui-react');
 
 class Application extends React.Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class Application extends React.Component {
 
   render() {
     return (
-        <Sidebar.Pushable as={Segment} className={s.root}>
+        <Sidebar.Pushable className={s.root}>
           <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
                    vertical inverted>
             <Menu.Item name='home'>

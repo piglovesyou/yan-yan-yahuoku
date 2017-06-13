@@ -31,6 +31,7 @@ function unloadModulesMiddleware(_, __, next) {
 function defaultRouteMiddleware(req, res) {
   const data = {
     title: 'Express',
+    displayName: req.user && req.user.displayName,
     messages: ['yeah!', 'baam!', 'baaa!'],
   };
 

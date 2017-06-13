@@ -16,9 +16,13 @@
   "description": "React server-side rendering with CSS modules example",
   "dependencies": {
     "compression": "^1.6.2",
+    "connect-redis": "^3.3.0",
     "deepmerge": "^1.3.2",
     "express": "~4.15.3",
+    "express-session": "^1.15.3",
     "morgan": "~1.8.2",
+    "passport": "^0.3.2",
+    "passport-yj": "^1.0.6",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
     "serve-favicon": "~2.4.3"
