@@ -5,7 +5,7 @@ module.exports = {
   baam() {
     dispatch({type: 'baam'});
   },
-  async prepareSearchCategory(categoryId) {
+  async selectSearchCategory(categoryId) {
     const res = await fetch(`/api/categoryTree?category=${categoryId}`);
     const jsonString = await res.json();
     const json = JSON.parse(jsonString);

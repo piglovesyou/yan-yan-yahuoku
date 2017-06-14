@@ -7,7 +7,8 @@ class Store extends ReduceStore {
     return {
       title: null,
       messages: [],
-      category: localStorage.getItem('v1.search_category_id') || 0,
+      category: null,
+      lastCategoryId: localStorage.getItem('v1.last_search_category_id') || 0,
     };
   }
 
@@ -20,8 +21,10 @@ class Store extends ReduceStore {
     switch (action.type) {
       case 'update_category':
         newState = Object.assign({}, state, {
-          category: action.data
+          category: action.data,
+          lastCategoryId: action.data.CategoryId,
         });
+        localStorage.setItem('v1.last_search_category_id', action.data.CategoryId);
         break;
 
       case 'baam':

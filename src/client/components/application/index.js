@@ -8,7 +8,7 @@ const About = require('../about').default;
 const Home = require('../home').default;
 const s = require('./index.sass');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
-const {prepareSearchCategory} = require('../../actions');
+const {selectSearchCategory} = require('../../actions');
 
 class Application extends React.Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class Application extends React.Component {
   }
 
   componentDidMount() {
-    prepareSearchCategory(this.state.category);
+    selectSearchCategory(this.state.lastCategoryId);
   }
 
   render() {
