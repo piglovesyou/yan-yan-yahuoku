@@ -1,16 +1,78 @@
 const assert = require('assert');
-// const appToken = new Buffer(`${process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY}:${process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET}`).toString();
+// const appToken = new
+// Buffer(`${process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY}:${process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET}`).toString();
 const util = require('util');
 const request = util.promisify(require('request'));
 
-module.exports.default = async function proxyApiRequest(req, res) {
-  const {body} = await request({
-    uri: 'https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList',
-    qs: {start: 1, output: 'json', callback: '_'},
+// Requires appToken
+const endpointsOnAppToken = {
+  categoryTree: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryTree',
+  categoryLeaf: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryLeaf',
+  sellingList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList',
+  search: 'https://auctions.yahooapis.jp/AuctionWebService/V2/search',
+  auctionItem: 'https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem',
+  BidHistory: 'https://auctions.yahooapis.jp/AuctionWebService/V1/BidHistory',
+  BidHistoryDetail: 'https://auctions.yahooapis.jp/AuctionWebService/V1/BidHistoryDetail',
+  ShowQandA: 'https://auctions.yahooapis.jp/AuctionWebService/V1/ShowQandA',
+  ShowRating: 'https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating',
+  saleCampaign: 'https://auctions.yahooapis.jp/AuctionWebService/V1/saleCampaign',
+};
+
+// Requires access_token
+const endpointsOnAccessToken = {
+  openWatchList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList',
+  closeWatchList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/closeWatchList',
+  myBidList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/myBidList',
+  myWonList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/myWonList',
+  mySellingList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/mySellingList',
+  myCloseList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/myCloseList',
+  myWinnerList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/myWinnerList',
+  deleteMyWonList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyWonList',
+  deleteMyCloseList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyCloseList',
+  myOfferList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/myOfferList',
+  deleteMyOfferList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyOfferList',
+  reminder: 'https://auctions.yahooapis.jp/AuctionWebService/V1/reminder',
+  deleteReminder: 'https://auctions.yahooapis.jp/AuctionWebService/V1/deleteReminder',
+  watchList: 'https://auctions.yahooapis.jp/AuctionWebService/V1/watchList',
+  deleteWatchList: 'https://auctions.yahooapis.jp/AuctionWebServicee/V1/deleteWatchList',
+};
+
+const baseQueryParam = {
+  output: 'json',
+  callback: '_'
+};
+function requestAuctionAPIWithAppToken(endpoint, params) {
+  return request({
+    uri: endpointsOnAppToken[endpoint],
+    qs: Object.assign(
+        baseQueryParam,
+        {appid: process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY},
+        params),
     method: 'GET',
-    headers: {Authorization: 'Bearer ' + req.user.access_token}
   });
-  const jsonString = convertJSONPToJSON(body);
+}
+function requestAuctionAPIWithAccessToken(endpoint, access_token, params) {
+  return request({
+    uri: endpointsOnAccessToken[endpoint],
+    qs: Object.assign(
+        baseQueryParam,
+        {access_token: access_token},
+        params),
+    method: 'GET'
+  });
+}
+async function requestAuctionAPI(endpoint, params, access_token) {
+  const {body} = endpointsOnAppToken[endpoint] ? await requestAuctionAPIWithAppToken(endpoint, params)
+      : endpointsOnAccessToken[endpoint] ? await requestAuctionAPIWithAccessToken(endpoint, access_token, params)
+          : {};
+  if (!body) {
+    return;
+  }
+  return convertJSONPToJSON(body);
+}
+
+module.exports.default = async function proxyApiRequest(req, res, next) {
+  const json = await requestAuctionAPI(req.path.slice('/api/'.length), req.query, req.user.access_token);
   // TODO: Handle error without parsing JSON
   // const result = convertJSONPtoObject(body);
   // if (result['Error']) {
@@ -26,7 +88,8 @@ module.exports.default = async function proxyApiRequest(req, res) {
   //     });
   //   }
   // }
-  res.json(jsonString);
+  if (json) return res.json(json);
+  next();
 };
 
 function isTokenExpired(result) {

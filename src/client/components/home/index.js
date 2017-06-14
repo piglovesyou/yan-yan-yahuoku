@@ -8,7 +8,7 @@ module.exports.default = function Home(props) {
       <div className={s.root}>
         <h2>Home...</h2>
         <h3>Messages <Button onClick={baam}>Add message</Button></h3>
-        <p><a href="/api/watchlist">/api/watchlist</a></p>
+        <p><a href="/api/openWatchList?start=1">/api/openWatchList?start=1</a></p>
         <ul>
           {props.messages.map((m, i) => <li key={i}>{m}</li>)}
         </ul>

@@ -57,7 +57,7 @@ app.get('/auth/logout', (req, res) => {
   res.send('You logged out. <a href="/">Go back to home screen.</a>');
 });
 
-app.get('/api/watchlist', require('./middlewares/yahoo-api').default);
+app.get('/api/*', require('./middlewares/yahoo-api').default);
 
 app.get('*', require('./middlewares/react-views').default);
 
