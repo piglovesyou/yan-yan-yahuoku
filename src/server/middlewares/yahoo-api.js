@@ -41,9 +41,9 @@ const baseQueryParam = {
   output: 'json',
   callback: '_'
 };
-function requestAuctionAPIWithAppToken(endpoint, params) {
+function requestAuctionAPIWithAppToken(uri, params) {
   return request({
-    uri: endpointsOnAppToken[endpoint],
+    uri,
     qs: Object.assign(
         baseQueryParam,
         {appid: process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY},
@@ -51,19 +51,19 @@ function requestAuctionAPIWithAppToken(endpoint, params) {
     method: 'GET',
   });
 }
-function requestAuctionAPIWithAccessToken(endpoint, access_token, params) {
+function requestAuctionAPIWithAccessToken(uri, params, access_token) {
   return request({
-    uri: endpointsOnAccessToken[endpoint],
+    uri,
     qs: Object.assign(
         baseQueryParam,
-        {access_token: access_token},
+        {access_token},
         params),
     method: 'GET'
   });
 }
 async function requestAuctionAPI(endpoint, params, access_token) {
-  const {body} = endpointsOnAppToken[endpoint] ? await requestAuctionAPIWithAppToken(endpoint, params)
-      : endpointsOnAccessToken[endpoint] ? await requestAuctionAPIWithAccessToken(endpoint, access_token, params)
+  const {body} = endpointsOnAppToken[endpoint] ? await requestAuctionAPIWithAppToken(endpointsOnAppToken[endpoint], params)
+      : endpointsOnAccessToken[endpoint] ? await requestAuctionAPIWithAccessToken(endpointsOnAccessToken[endpoint], params, access_token)
           : {};
   if (!body) {
     return;
