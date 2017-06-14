@@ -1,0 +1,26 @@
+https://auctions.yahooapis.jp/AuctionWebService/V2/categoryTree?appid=<あなたのアプリケーションID>&category=<ヤフオク!のカテゴリID>
+https://auctions.yahooapis.jp/AuctionWebService/V2/categoryLeaf?appid=<あなたのアプリケーションID>&category=<商品リストのカテゴリID>
+https://auctions.yahooapis.jp/AuctionWebService/V2/sellingList?appid=<あなたのアプリケーションID>&sellerID=<出品者のYahoo! JAPAN ID>
+https://auctions.yahooapis.jp/AuctionWebService/V2/search?appid=<あなたのアプリケーションID>&query=%E3%83%91%E3%82%BD%E3%82%B3%E3%83%B3
+https://auctions.yahooapis.jp/AuctionWebService/V2/auctionItem?appid=<あなたのアプリケーションID>&auctionID=<商品（オークション）のID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/BidHistory?appid=<あなたのアプリケーションID>&auctionID=<商品（オークション）のID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/BidHistoryDetail?appid=<あなたのアプリケーションID>&auctionID=<商品（オークション）のID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/ShowQandA?appid=<あなたのアプリケーションID>&auctionID=<商品（オークション）のID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/ShowRating?appid=<あなたのアプリケーションID>&id=<評価を参照する対象のYahoo! JAPAN ID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/saleCampaign?appid=<あなたのアプリケーションID>&results=10
+
+https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V2/closeWatchList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V2/myBidList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V2/myWonList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V2/mySellingList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V2/myCloseList?start=<参照するページ番号>&list=<落札者ありなしの指定>
+https://auctions.yahooapis.jp/AuctionWebService/V1/myWinnerList?auctionid=<オークションIDを指定>
+https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyWonList?auctionID=<削除するオークションID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyCloseList?auctionID=<削除するオークションID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/myOfferList?start=<参照するページ番号>
+https://auctions.yahooapis.jp/AuctionWebService/V1/deleteMyOfferList?auction_id=x12345678,c87654321
+https://auctions.yahooapis.jp/AuctionWebService/V1/reminder?auctionID=<ウォッチリストリマインダーの設定をするオークションID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/deleteReminder?auctionID=<ウォッチリストリマインダーの解除をするオークションID>
+https://auctions.yahooapis.jp/AuctionWebService/V1/watchList?auctionID=<ウォッチリストに追加するオークションID>
+https://auctions.yahooapis.jp/AuctionWebServicee/V1/deleteWatchList?auctionID=<ウォッチリストから削除するオークションID>

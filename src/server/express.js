@@ -6,13 +6,10 @@ const logger = require('morgan');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../../webpack-configs/client');
-const middlewares = require('./middlewares').default;
 const passport = require('./passport').default;
 const session = require('express-session');
 const sessionStore = require('./session-store').default;
-const util = require('util');
-const request = util.promisify(require('request'));
-const assert =require('assert');
+const assert = require('assert');
 
 const {isProduction} = require('./env');
 const app = express();
@@ -47,7 +44,8 @@ app.get('/auth/yj',
       scope: 'openid profile email',
       nonce: parseInt((new Date) / 1000)
     }));
-app.get('/auth/yj/callback',
+app.get(
+    require('url').parse(process.env.YAN_YAN_YAHUOKU_CALLBACK_URL).pathname,
     passport.authenticate('yj', {
       successRedirect: '/',
     }),
@@ -59,23 +57,9 @@ app.get('/auth/logout', (req, res) => {
   res.send('You logged out. <a href="/">Go back to home screen.</a>');
 });
 
-app.get('/api/', (req, res) => {
-  request({
-    uri: 'https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList',
-    qs: { start: 1, output: 'json', callback: '_'},
-    method: 'GET',
-    headers: { Authorization: 'Bearer ' + req.user.token }
-  }).then(({body}) => {
-    const result = convertJSONPtoObject(body);
-    res.send(JSON.stringify(result));
-  });
-});
+app.get('/api/watchlist', require('./middlewares/yahoo-api').default);
 
-function convertJSONPtoObject(jsonp) {
-  return JSON.parse(jsonp.slice(jsonp.indexOf('(') + 1, jsonp.lastIndexOf(')')));
-}
-
-app.get('*', middlewares);
+app.get('*', require('./middlewares/react-views').default);
 
 // Handle 404
 app.use((req, res, next) => {
