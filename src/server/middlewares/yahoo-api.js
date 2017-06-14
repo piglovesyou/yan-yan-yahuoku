@@ -1,10 +1,10 @@
 const assert = require('assert');
-// const appToken = new
-// Buffer(`${process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY}:${process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET}`).toString();
+const appToken = new Buffer(
+    `${process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY}:${process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET}`).toString('base64');
 const util = require('util');
 const request = util.promisify(require('request'));
 
-// Requires appToken
+// Requires appid
 const endpointsOnAppToken = {
   categoryTree: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryTree',
   categoryLeaf: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryLeaf',
@@ -71,38 +71,39 @@ async function requestAuctionAPI(endpoint, params, access_token) {
   return convertJSONPToJSON(body);
 }
 
+const errorJSONPrefix = ' {\n\"Error\" : ';
+const tokenExpiredErrorJSON = ' {\n\"Error\" : {\n\"Message\" : \"Please provide valid credentials. Bearer realm=\\\"yahooapis.jp\\\", error=\\\"invalid_token\\\", error_description=\\\"expired token\\\"\"\n}\n} ';
+async function requestNewAccessToken(req) {
+  const {body} = await request({
+    uri: 'https://auth.login.yahoo.co.jp/yconnect/v1/token',
+    method: 'POST',
+    headers: {Authorization: `Basic ${appToken}`},
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: req.user.refresh_token,
+    }
+  });
+  const {access_token} = JSON.parse(body);
+  return access_token;
+}
 module.exports.default = async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPI(req.path.slice('/api/'.length), req.query, req.user.access_token);
-  // TODO: Handle error without parsing JSON
-  // const result = convertJSONPtoObject(body);
-  // if (result['Error']) {
-  //   if (isTokenExpired(result)) {
-  //     const x = request({
-  //       uri: 'https://auth.login.yahoo.co.jp/yconnect/v1/token',
-  //       method: 'POST',
-  //       headers: {Authorization: `Basic ${appToken}`},
-  //       form: {
-  //         grant_type: 'refresh_token',
-  //         refresh_token: req.user.refresh_token,
-  //       }
-  //     });
-  //   }
-  // }
+  const json = await requestAuctionAPI(req.path.slice('/api/'.length), req.query, req.user && req.user.access_token);
+
+  if (json.startsWith(errorJSONPrefix)) {
+    if (json === tokenExpiredErrorJSON) {
+      const access_token = await requestNewAccessToken(req);
+      if (access_token) {
+        Object.assign(req.user, {access_token}); // TODO: Save it to session storage too
+        return proxyApiRequest(req, res, next);
+      }
+    }
+    res.status(500); // TODO: Replace to yahoo response code
+  }
   if (json) return res.json(json);
   next();
 };
 
-function isTokenExpired(result) {
-  return result['Error'] &&
-      result['Error']['Message'] === 'Please provide valid credentials. Bearer realm="yahooapis.jp", error="invalid_token", error_description="expired token"' || false;
-}
-assert.deepEqual(isTokenExpired({Error: {Message: 'Please provide valid credentials. Bearer realm="yahooapis.jp", error="invalid_token", error_description="expired token"'}}), true);
-assert.deepEqual(isTokenExpired({}), false);
-
 function convertJSONPToJSON(jsonp) {
   return jsonp.slice(jsonp.indexOf('(') + 1, jsonp.lastIndexOf(')'));
 }
-function convertJSONPtoObject(jsonp) {
-  return JSON.parse(convertJSONPToJSON(jsonp));
-}
-assert.deepEqual(convertJSONPtoObject('xxx({"blaa":"blaa"})'), {blaa: 'blaa'});
+assert.deepEqual(convertJSONPToJSON('xxx({"blaa":"blaa"})'), '{"blaa":"blaa"}');

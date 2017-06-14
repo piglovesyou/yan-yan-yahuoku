@@ -6,20 +6,29 @@ class Store extends ReduceStore {
   getInitialState() {
     return {
       title: null,
-      messages: []
+      messages: [],
+      category: localStorage.getItem('v1.search_category_id') || 0,
     };
   }
+
   getState() {
     return justOnceStateInjector.consume() || this._state;
   }
+
   reduce(state, action) {
     let newState;
     switch (action.type) {
-    case 'baam':
-      newState = Object.assign({}, state, {
-        messages: state.messages.concat(randomMessage())
-      });
-      break;
+      case 'update_category':
+        newState = Object.assign({}, state, {
+          category: action.data
+        });
+        break;
+
+      case 'baam':
+        newState = Object.assign({}, state, {
+          messages: state.messages.concat(randomMessage())
+        });
+        break;
     }
     return newState;
 

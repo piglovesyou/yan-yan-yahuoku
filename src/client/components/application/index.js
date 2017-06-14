@@ -8,6 +8,7 @@ const About = require('../about').default;
 const Home = require('../home').default;
 const s = require('./index.sass');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
+const {prepareSearchCategory} = require('../../actions');
 
 class Application extends React.Component {
   constructor(props) {
@@ -22,6 +23,10 @@ class Application extends React.Component {
 
   static calculateState() {
     return Store.getState();
+  }
+
+  componentDidMount() {
+    prepareSearchCategory(this.state.category);
   }
 
   render() {

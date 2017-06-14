@@ -29,7 +29,9 @@ app.use(passport.session());
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
-if (isProduction || Number(process.env.NODE_API_DEV)) {
+if (Number(process.env.NODE_API_DEV)) {
+  // No config for static files
+} else if (isProduction ) {
   app.use(compression());
 } else {
   Object.assign(webpackConfig.output, {path: '/'});
