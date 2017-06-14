@@ -1,11 +1,10 @@
-const express = require('./express');
 const http = require('http');
 
 const debug = require('debug')('site:server');
-const port = express.get('port');
+const port = require('./express').default.get('port');
 
 
-const server = http.createServer(express);
+const server = http.createServer(require('./express').default);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

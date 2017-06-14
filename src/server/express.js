@@ -10,6 +10,9 @@ const middlewares = require('./middlewares').default;
 const passport = require('./passport').default;
 const session = require('express-session');
 const sessionStore = require('./session-store').default;
+const util = require('util');
+const request = util.promisify(require('request'));
+const assert =require('assert');
 
 const {isProduction} = require('./env');
 const app = express();
@@ -29,7 +32,7 @@ app.use(passport.session());
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
-if (isProduction) {
+if (isProduction || Number(process.env.NODE_API_DEV)) {
   app.use(compression());
 } else {
   Object.assign(webpackConfig.output, {path: '/'});
@@ -41,14 +44,37 @@ app.use(express.static(Path.join(__dirname, '../../public')));
 // Handle browser GET accesses
 app.get('/auth/yj',
     passport.authenticate('yj', {
-      scope: 'openid profile email address',
+      scope: 'openid profile email',
       nonce: parseInt((new Date) / 1000)
     }));
 app.get('/auth/yj/callback',
     passport.authenticate('yj', {
-      failureRedirect: '/login'
+      successRedirect: '/',
     }),
-    (req, res) => res.redirect('/'));
+    (req, res) => {
+      res.send('<a href="/">Authentication failed. Go back and try again.</a>');
+    });
+app.get('/auth/logout', (req, res) => {
+  req.session.destroy();
+  res.send('You logged out. <a href="/">Go back to home screen.</a>');
+});
+
+app.get('/api/', (req, res) => {
+  request({
+    uri: 'https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList',
+    qs: { start: 1, output: 'json', callback: '_'},
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + req.user.token }
+  }).then(({body}) => {
+    const result = convertJSONPtoObject(body);
+    res.send(JSON.stringify(result));
+  });
+});
+
+function convertJSONPtoObject(jsonp) {
+  return JSON.parse(jsonp.slice(jsonp.indexOf('(') + 1, jsonp.lastIndexOf(')')));
+}
+
 app.get('*', middlewares);
 
 // Handle 404
@@ -70,7 +96,7 @@ app.use(isProduction ? (err, req, res) => {
 ${err.stack}`);
 });
 
-module.exports = app;
+module.exports.default = app;
 
 function normalizePort(val) {
   const port = parseInt(val, 10);

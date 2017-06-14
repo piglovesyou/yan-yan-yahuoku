@@ -11,7 +11,7 @@
     "prepublish": "NODE_ENV=production npm run build"
   },
   "engines": {
-    "node": "7.x"
+    "node": "8.x"
   },
   "description": "React server-side rendering with CSS modules example",
   "dependencies": {
@@ -25,6 +25,7 @@
     "passport-yj": "^1.0.6",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
+    "request": "^2.81.0",
     "serve-favicon": "~2.4.3"
   },
   "devDependencies": {

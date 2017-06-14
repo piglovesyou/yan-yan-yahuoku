@@ -19,8 +19,8 @@ passport.use(new YJStrategy({
       clientID: process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY,
       clientSecret: process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET,
       callbackURL: process.env.YAN_YAN_YAHUOKU_CALLBACK_URL,
-    }, (accessToken, refreshToken, {id, displayName}, done) => {
-      return done(null, {id, accessToken, refreshToken, displayName});
+    }, (token, tokenSecret, {id, displayName}, done) => {
+      return done(null, {id, token, tokenSecret, displayName});
     }
 ));
 

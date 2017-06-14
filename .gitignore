@@ -41,3 +41,4 @@ test.js
 /.idea
 
 dump.rdb
+package-lock.json
