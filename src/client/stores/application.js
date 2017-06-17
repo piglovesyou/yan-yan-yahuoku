@@ -8,7 +8,8 @@ class Store extends ReduceStore {
       title: null,
       messages: [],
       category: null,
-      lastCategoryId: localStorage.getItem('v1.last_search_category_id') || 0,
+      // TODO: take SSR into account
+      lastCategoryId: global.localStorage && localStorage.getItem('v1.last_search_category_id') || 0,
     };
   }
 

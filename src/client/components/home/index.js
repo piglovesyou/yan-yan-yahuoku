@@ -5,6 +5,11 @@ const {selectSearchCategory} = require('../../actions');
 
 module.exports.default = function Home(props) {
   const isLeaf = props.category && props.category.IsLeaf === 'true';
+  const depthIndex = props.category ? Number(props.category.Depth) : -1;
+  const parentCategory = depthIndex > 0 ? {
+    name: props.category.CategoryPath.split(' > ')[depthIndex - 1],
+    id: props.category.ParentCategoryId
+  } : null;
 
   // countryOptions = [ { key: 'af', value: 'af', flag: 'af', text: 'Afghanistan' }, ...  ]
   return (
@@ -14,37 +19,48 @@ module.exports.default = function Home(props) {
           {props.category
               ? (
                   <Breadcrumb>
-                    <Breadcrumb.Section>
-                      {props.category.CategoryName}
-                    </Breadcrumb.Section>
 
-                    {!isLeaf && <Breadcrumb.Divider icon='right angle'/>}
-
-                    {!isLeaf && <Breadcrumb.Section>
-                      <Dropdown text='(下位カテゴリを選択)'>
-                        <Dropdown.Menu>
-                          {props.category.ChildCategory.map(c => {
-                            return <Dropdown.Item key={c.CategoryId}
-                                                  text={c.CategoryName}
-                                                  value={c.CategoryId}
-                                                  onClick={(e, item) => {
-                                                    selectSearchCategory(item.value);
-                                                  }}
-                            />;
-                          })}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </Breadcrumb.Section>
+                    {
+                      parentCategory ? (
+                          <Breadcrumb.Section link
+                                              onClick={() => selectSearchCategory(parentCategory.id)}
+                          >{parentCategory.name}</Breadcrumb.Section>
+                      ) : null
                     }
+
+                    {parentCategory ? <Breadcrumb.Divider icon='right angle'/> : null }
+
+                    <Breadcrumb.Section>
+                      {
+                        isLeaf ? props.category.CategoryName
+                            : (
+                            <Dropdown text={props.category.CategoryName}>
+                              <Dropdown.Menu className={s.dropdownMenu}>
+                                {props.category.ChildCategory.map(c => {
+                                  return <Dropdown.Item key={c.CategoryId}
+                                                        text={c.CategoryName}
+                                                        value={c.CategoryId}
+                                                        onClick={(e, item) => {
+                                                          selectSearchCategory(item.value);
+                                                        }}
+                                  />;
+                                })}
+                              </Dropdown.Menu>
+                            </Dropdown>
+                        )
+                      }
+                    </Breadcrumb.Section>
+
                   </Breadcrumb>
+
               ) : null
           }
-
         </div>
+
         <div><a href="/api/openWatchList?start=1">/api/openWatchList?start=1</a></div>
         {/*<h3>Messages <Button onClick={baam}>Add message</Button></h3>*/}
         {/*<ul>*/}
-          {/*{props.messages.map((m, i) => <li key={i}>{m}</li>)}*/}
+        {/*{props.messages.map((m, i) => <li key={i}>{m}</li>)}*/}
         {/*</ul>*/}
       </div>
   );
