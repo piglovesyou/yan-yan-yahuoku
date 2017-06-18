@@ -7,7 +7,7 @@ module.exports.default = function GoodsPane(props) {
       <div className={`${s.root}${props.className ? ' ' + props.className : ''}`}>
 
         {
-          props.goods ? props.goods.slice(0, 1).map(g => {
+          props.goods ? props.goods.slice(0, 4).map(g => {
             return <img key={g.AuctionID} src={g.Image} />;
           }) : null
         }

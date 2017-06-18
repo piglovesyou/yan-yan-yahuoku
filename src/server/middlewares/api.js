@@ -4,6 +4,9 @@ const appToken = new Buffer(
 const util = require('util');
 const request = util.promisify(require('request'));
 
+const express = require('express');
+const router = express.Router();
+
 // Requires appid
 const endpointsOnAppToken = {
   categoryTree: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryTree',
@@ -41,6 +44,7 @@ const baseQueryParam = {
   output: 'json',
   callback: '_'
 };
+
 function requestAuctionAPIWithAppToken(uri, params) {
   return request({
     uri,
@@ -51,6 +55,7 @@ function requestAuctionAPIWithAppToken(uri, params) {
     method: 'GET',
   });
 }
+
 function requestAuctionAPIWithAccessToken(uri, params, access_token) {
   return request({
     uri,
@@ -61,6 +66,7 @@ function requestAuctionAPIWithAccessToken(uri, params, access_token) {
     method: 'GET'
   });
 }
+
 async function requestAuctionAPI(endpoint, params, access_token) {
   const {body} = endpointsOnAppToken[endpoint] ? await requestAuctionAPIWithAppToken(endpointsOnAppToken[endpoint], params)
       : endpointsOnAccessToken[endpoint] ? await requestAuctionAPIWithAccessToken(endpointsOnAccessToken[endpoint], params, access_token)
@@ -86,8 +92,9 @@ async function requestNewAccessToken(req) {
   const {access_token} = JSON.parse(body);
   return access_token;
 }
-module.exports.default = async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPI(req.path.slice('/api/'.length), req.query, req.user && req.user.access_token);
+
+router.get('/*', async function proxyApiRequest(req, res, next) {
+  const json = await requestAuctionAPI(req.path.slice('/'.length), req.query, req.user && req.user.access_token);
 
   if (json.startsWith(errorJSONPrefix)) {
     if (json === tokenExpiredErrorJSON) {
@@ -101,7 +108,9 @@ module.exports.default = async function proxyApiRequest(req, res, next) {
   }
   if (json) return res.json(json);
   next();
-};
+});
+
+module.exports.default = router;
 
 function convertJSONPToJSON(jsonp) {
   return jsonp.slice(jsonp.indexOf('(') + 1, jsonp.lastIndexOf(')'));

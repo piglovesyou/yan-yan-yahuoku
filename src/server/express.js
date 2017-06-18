@@ -55,11 +55,11 @@ app.get(
       res.send('<a href="/">Authentication failed. Go back and try again.</a>');
     });
 app.get('/auth/logout', (req, res) => {
-  req.session.destroy();
+  req.session && req.session.destroy();
   res.send('You logged out. <a href="/">Go back to home screen.</a>');
 });
 
-app.get('/api/*', require('./middlewares/yahoo-api').default);
+app.use('/api', require('./middlewares/api').default);
 
 app.get('*', require('./middlewares/react-views').default);
 
