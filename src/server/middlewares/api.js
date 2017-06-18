@@ -93,8 +93,8 @@ async function requestNewAccessToken(req) {
   return access_token;
 }
 
-router.get('/*', async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPI(req.path.slice('/'.length), req.query, req.user && req.user.access_token);
+router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
+  const json = await requestAuctionAPI(req.params.endpoint, req.query, req.user && req.user.access_token);
 
   if (json.startsWith(errorJSONPrefix)) {
     if (json === tokenExpiredErrorJSON) {
