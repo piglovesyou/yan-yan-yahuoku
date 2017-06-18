@@ -1,6 +1,6 @@
 const React = require('react');
 const s = require('./index.sass');
-const {selectSearchCategory} = require('../../actions');
+const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
 const {Icon, Breadcrumb, Dropdown} = require('semantic-ui-react');
 
 function CategoryPath(props) {
@@ -52,18 +52,35 @@ function CategoryPath(props) {
   }
 }
 
-function QueryKeywords(props) {
-  return (
-      <input className={s.queryKeywordsInput} placeholder="商品のキーワード" />
-  )
+class ConditionPane extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      queryKeywordsInputValue: this.props.lastQueryKeywords,
+    };
+  }
+
+  render() {
+    return (
+        <div className={s.root}>
+          <form onSubmit={onSubmit.bind(this)}>
+            <CategoryPath {...this.props}/>
+            <input ref="queryKeywordsInput"
+                   className={s.queryKeywordsInput}
+                   placeholder="商品のキーワード"
+                   value={this.state.queryKeywordsInputValue}
+                   onChange={(e) => this.setState({
+                    queryKeywordsInputValue: e.target.value,
+                   })}
+            />
+          </form>
+        </div>
+    );
+  }
 }
+module.exports.default = ConditionPane;
 
-module.exports.default = function ConditionPane(props) {
-  return (
-      <div className={s.root}>
-        <CategoryPath {...props}/>
-        <QueryKeywords {...props}/>
-      </div>
-  );
-};
-
+function onSubmit(e) {
+  executeQueryWithKeywords(this.refs.queryKeywordsInput.value);
+  e.preventDefault();
+}

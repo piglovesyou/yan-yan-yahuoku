@@ -6,10 +6,11 @@ const Toolbar = require('../toolbar').default;
 const Navigation = require('../navigation').default;
 const About = require('../about').default;
 const Home = require('../home').default;
+const GoodsPane = require('../goods-pane').default;
 const ConditionPane = require('../condition-pane').default;
 const s = require('./index.sass');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
-const {selectSearchCategory} = require('../../actions');
+const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
 
 class Application extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class Application extends React.Component {
 
   componentDidMount() {
     selectSearchCategory(this.state.lastCategoryId);
+    executeQueryWithKeywords(this.state.lastQueryKeywords);
   }
 
   render() {
@@ -56,6 +58,8 @@ class Application extends React.Component {
             <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu}/>
 
             <ConditionPane {...this.state} />
+
+            <GoodsPane className={s.goodsPane} {...this.state} />
 
             {/*<div className={s.masterDetail}>*/}
             {/*<Navigation className={s.masterDetailMaster}/>*/}

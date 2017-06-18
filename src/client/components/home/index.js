@@ -11,7 +11,6 @@ module.exports.default = function Home(props) {
     id: props.category.ParentCategoryId
   } : null;
 
-  // countryOptions = [ { key: 'af', value: 'af', flag: 'af', text: 'Afghanistan' }, ...  ]
   return (
       <div className={s.root}>
         <h2>Home...</h2>

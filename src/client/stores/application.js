@@ -8,8 +8,11 @@ class Store extends ReduceStore {
       title: null,
       messages: [],
       category: null,
+      goods: [],
+
       // TODO: take SSR into account
       lastCategoryId: global.localStorage && localStorage.getItem('v1.last_search_category_id') || 0,
+      lastQueryKeywords: global.localStorage && localStorage.getItem('v1.last_query_keywords') || ''
     };
   }
 
@@ -21,24 +24,26 @@ class Store extends ReduceStore {
     let newState;
     switch (action.type) {
       case 'update_category':
+        const category = action.json.ResultSet.Result;
         newState = Object.assign({}, state, {
-          category: action.data,
-          lastCategoryId: action.data.CategoryId,
+          category: category,
+          lastCategoryId: category.CategoryId,
         });
-        localStorage.setItem('v1.last_search_category_id', action.data.CategoryId);
+        localStorage.setItem('v1.last_search_category_id', category.CategoryId);
         break;
 
-      case 'baam':
+      case 'update_goods':
+        const items = action.json.ResultSet.Result.Item;
         newState = Object.assign({}, state, {
-          messages: state.messages.concat(randomMessage())
+          goods: items.map(i => {
+            i['@largerImage'] = i.Image.replace('-thumb-', '-img600x450-');
+            return i;
+          }),
         });
+        localStorage.setItem('v1.last_query_keywords', action.args.keywords);
         break;
     }
     return newState;
-
-    function randomMessage() {
-      return state.messages[Math.floor(Math.random() * state.messages.length)];
-    }
   }
 }
 
