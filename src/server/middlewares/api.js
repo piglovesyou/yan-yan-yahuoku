@@ -45,16 +45,19 @@ const baseQueryParam = {
   callback: '_'
 };
 
-function requestAuctionAPIWithAppToken(uri, params) {
-  return request({
-    uri,
-    qs: Object.assign(
-        baseQueryParam,
-        {appid: process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY},
-        params),
-    method: 'GET',
-  });
-}
+const requestAuctionAPIWithAppToken = (() => {
+  function requestAuctionAPIWithAppToken(uri, params) {
+    return request({
+      uri,
+      qs: Object.assign(
+          baseQueryParam,
+          {appid: process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY},
+          params),
+      method: 'GET',
+    });
+  }
+  return require('../eval-cacher').wrapAsyncFn(requestAuctionAPIWithAppToken);
+})();
 
 function requestAuctionAPIWithAccessToken(uri, params, access_token) {
   return request({
@@ -93,10 +96,8 @@ async function requestNewAccessToken(req) {
   return access_token;
 }
 
-const requestAuctionAPIWithCache = require('../eval-cacher').wrapAsyncFn(requestAuctionAPI);
-
 router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPIWithCache(req.params.endpoint, req.query, req.user && req.user.access_token);
+  const json = await requestAuctionAPI(req.params.endpoint, req.query, req.user && req.user.access_token);
 
   if (json.startsWith(errorJSONPrefix)) {
     if (json === tokenExpiredErrorJSON) {

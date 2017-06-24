@@ -23,4 +23,4 @@ window.startStyleReload = () => {
         .map(e => e.href = `${require('url').parse(e.href).pathname}?${Date.now()}`);
   }, 2000);
 };
-window.startStyleReload();
+// window.startStyleReload();
