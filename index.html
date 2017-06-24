@@ -3,76 +3,33 @@
 <head>
     <title>Express</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css"/>
-    <link rel='stylesheet' href="//localhost:3000/stylesheets/main.css"/>
+    <!--<link rel='stylesheet' href="//localhost:3000/stylesheets/main.css"/>-->
 
     <style>
         body {
-            display: block;
             margin: 50px;
         }
 
-        .breadcrumb-wrap {
-            position: relative;
-            width: 18rem;
-            height: 3rem;
-            box-sizing: content-box;
-            overflow: hidden;
-        }
-        .breadcrumb-wrap:before {
-            content: "";
-            width: 2rem;
-            height: 3rem;
-            position: absolute;
-            background: linear-gradient( to right, rgba(255,255,255,1), rgba(255,255,255,0));
-            z-index: 9999;
-        }
-        .breadcrumb {
-            position: absolute;
-            width: 9999px;
-            right: 0;
-            top: 0;
-            text-align: right;
-        }
-        .section {
-            vertical-align: middle;
+        .wrap {
+            border: 1px black solid;
+            display: inline-block;
+            max-width: 10rem;
+            white-space: nowrap;
+            padding: 8px;
+            direction: rtl;
         }
 
-        .dropdown .text {
-            font-size: 3rem;
-            vertical-align: middle;
+        .content {
+            display: inline-block;
+            background-color: lightcoral;
+            direction: ltr;
         }
     </style>
 </head>
 <body>
 
-<!--<div id="application-container"></div>-->
-<!--<script>window.__initialData = {"title":"Express","messages":["yeah!","baam!","baaa!"]};</script>-->
-<!--<script src="//localhost:3000/javascripts/main.js"></script>-->
-
-<div class="breadcrumb-wrap">
-    <div class="ui breadcrumb">
-        <a class="section">コンピュータとインターネット</a><i
-                aria-hidden="true" class="right angle icon divider"></i>
-        <div class="section main-category">
-            <div role="listbox" aria-expanded="false" class="ui dropdown" tabindex="0">
-                <div class="text">OS</div>
-                <i aria-hidden="true" class="dropdown icon"></i>
-                <div class="menu transition src-client-components-condition-pane-_index_dropdown-menu">
-                    <div role="option" class="item"><span class="text">Windows 7</span></div>
-                    <div role="option" class="item"><span class="text">Windows Vista</span></div>
-                    <div role="option" class="item"><span class="text">WindowsXP</span></div>
-                    <div role="option" class="item"><span class="text">WindowsNT/2000</span></div>
-                    <div role="option" class="item"><span class="text">Windows Me</span></div>
-                    <div role="option" class="item"><span class="text">Windows95/98/CE</span></div>
-                    <div role="option" class="item"><span class="text">MS-DOS</span></div>
-                    <div role="option" class="item"><span class="text">OS/2</span></div>
-                    <div role="option" class="item"><span class="text">PC-UNIX、Linux、BSD</span></div>
-                    <div role="option" class="item"><span class="text">UNIX</span></div>
-                    <div role="option" class="item"><span class="text">その他</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="wrap">
+    <div class="content">ああああああ●</div>
 </div>
 
 </body>
