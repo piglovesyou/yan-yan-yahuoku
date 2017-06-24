@@ -1,5 +1,8 @@
 .root {
   padding: 0 16px 16px;
+  & :global(.icon) {
+    vertical-align: middle;
+  }
 }
 
 .dropdown-menu {
@@ -7,11 +10,6 @@
   overflow: auto;
 }
 
-.query-keywords-input {
-  border: none;
-  font-size: 2rem;
-  vertical-align: middle;
-}
 
 .category-path {
   $max-parent-width: 6rem;
@@ -44,3 +42,11 @@
     }
   }
 }
+
+.query-keywords-input {
+  border: none;
+  font-size: 2rem;
+  vertical-align: middle;
+  border-bottom: #999;
+}
+

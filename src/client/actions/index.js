@@ -28,11 +28,12 @@ module.exports = {
 
   async executeQueryWithKeywords(keywords) {
     // TODO: if keywords empty, hit category result api
-    const json = await requestAPI('search', {
-      category: store.getState().lastCategoryId,
-      query: keywords,
-    });
-    dispatch({ type: 'update_goods',
+    const category = store.getState().lastCategoryId;
+    const json = keywords
+        ? await requestAPI('search', {category, query: keywords,})
+        : await requestAPI('categoryLeaf', {category});
+    dispatch({
+      type: 'update_goods',
       json,
       args: {keywords}
     });

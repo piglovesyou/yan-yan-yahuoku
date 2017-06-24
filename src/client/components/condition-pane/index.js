@@ -1,7 +1,7 @@
 const React = require('react');
 const s = require('./index.scss');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
-const {Breadcrumb, Dropdown} = require('semantic-ui-react');
+const {Icon, Breadcrumb, Dropdown} = require('semantic-ui-react');
 
 class CategoryPath extends React.Component {
   constructor(props) {
@@ -80,9 +80,10 @@ class ConditionPane extends React.Component {
         <div className={s.root}>
           <form onSubmit={onSubmit.bind(this)}>
             <CategoryPath {...this.props}/>
+            {/*<Icon name="caret right"/>*/}
             <input ref="queryKeywordsInput"
                    className={s.queryKeywordsInput}
-                   placeholder="商品のキーワード"
+                   placeholder="検索キーワード"
                    value={this.state.queryKeywordsInputValue}
                    onChange={(e) => this.setState({
                      queryKeywordsInputValue: e.target.value,
