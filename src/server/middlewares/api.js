@@ -7,7 +7,7 @@ const request = util.promisify(require('request'));
 const express = require('express');
 const router = express.Router();
 
-// Requires appid
+// Requires appid, let's cache returned values!
 const endpointsOnAppToken = {
   categoryTree: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryTree',
   categoryLeaf: 'https://auctions.yahooapis.jp/AuctionWebService/V2/categoryLeaf',
@@ -21,7 +21,7 @@ const endpointsOnAppToken = {
   saleCampaign: 'https://auctions.yahooapis.jp/AuctionWebService/V1/saleCampaign',
 };
 
-// Requires access_token
+// Requires access_token that everytime we ouhgt to evaluate values
 const endpointsOnAccessToken = {
   openWatchList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/openWatchList',
   closeWatchList: 'https://auctions.yahooapis.jp/AuctionWebService/V2/closeWatchList',
@@ -93,8 +93,10 @@ async function requestNewAccessToken(req) {
   return access_token;
 }
 
+const requestAuctionAPIWithCache = require('../eval-cacher').wrapAsyncFn(requestAuctionAPI);
+
 router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPI(req.params.endpoint, req.query, req.user && req.user.access_token);
+  const json = await requestAuctionAPIWithCache(req.params.endpoint, req.query, req.user && req.user.access_token);
 
   if (json.startsWith(errorJSONPrefix)) {
     if (json === tokenExpiredErrorJSON) {
