@@ -1,9 +1,9 @@
 const LRU = require('lru-cache'),
     cache = LRU({
-      max: 500
-      , length: (n, key) => n * 2 + key.length
-      , dispose: (key, n) => { n.close(); }
-      , maxAge: 1000 * 60 * 60
+      max: 500,
+      length: (n, key) => n * 2 + key.length,
+      dispose: (key, n) => { n.close(); },
+      maxAge: 1000 * 60 * 60
     });
 
 module.exports.wrapAsyncFn = (fn) => {
