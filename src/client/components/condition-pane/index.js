@@ -37,32 +37,12 @@ class CategoryPath extends React.Component {
                     </div> : null
               }
 
-              {/*{*/}
-              {/*parentCategory ? (*/}
-              {/*<Breadcrumb.Section link*/}
-              {/*onClick={() => selectSearchCategory(parentCategory.id)}*/}
-              {/*>{parentCategory.name}</Breadcrumb.Section>*/}
-              {/*) : null*/}
-              {/*}*/}
-
-              {/*{parentCategory ? <Breadcrumb.Divider icon='right angle'/> : null }*/}
-
               <Breadcrumb.Section>
                 {
                   isLeaf ? <Breadcrumb.Section>{category.CategoryName}</Breadcrumb.Section>
                       : (
                       <Dropdown text={category.CategoryName}>
                         <Dropdown.Menu className={s.dropdownMenu}>
-                          {
-                            parentCategory ?
-                                <Dropdown.Item key={parentCategory.id}
-                                               text="（上に戻る）"
-                                               value={parentCategory.id}
-                                               onClick={(e, item) => {
-                                                 selectSearchCategory(item.value);
-                                               }}
-                                /> : null
-                          }
                           {category.ChildCategory.map(c => {
                             return <Dropdown.Item key={c.CategoryId}
                                                   text={c.CategoryName}

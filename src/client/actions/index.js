@@ -27,6 +27,7 @@ module.exports = {
   },
 
   async executeQueryWithKeywords(keywords) {
+    // TODO: if keywords empty, hit category result api
     const json = await requestAPI('search', {
       category: store.getState().lastCategoryId,
       query: keywords,
@@ -35,11 +36,6 @@ module.exports = {
       json,
       args: {keywords}
     });
-
-    // const i = json.ResultSet.Result.Item[0];
-    // const json2 = await requestAPI('auctionItem', {
-    //   auctionID: i.AuctionID
-    // });
   }
 };
 

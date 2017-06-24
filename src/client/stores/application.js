@@ -33,12 +33,9 @@ class Store extends ReduceStore {
         break;
 
       case 'update_goods':
-        const items = asArray(action.json.ResultSet.Result.Item);
+        const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
         newState = Object.assign({}, state, {
-          goods: items.map(i => {
-            i['@largerImage'] = i.Image.replace('-thumb-', '-img600x450-');
-            return i;
-          }),
+          goods: items
         });
         localStorage.setItem('v1.last_query_keywords', action.args.keywords);
         break;

@@ -1,37 +1,45 @@
 .root {
-  padding: 16px;
+  padding: 0 16px 16px;
 }
 
 .dropdown-menu {
-  max-height: 8 * 80px;
+  max-height: 8px * 60;
   overflow: auto;
 }
 
 .query-keywords-input {
   border: none;
+  font-size: 2rem;
+  vertical-align: middle;
 }
 
 .category-path {
-  $category-path-height: 3rem;
+  $max-parent-width: 6rem;
+  display: inline-block;
+  margin-right: 16px;
+  vertical-align: middle;
   &__parent-category {
     display: inline-block;
-    max-width: 6rem;
+    max-width: $max-parent-width;
     overflow: hidden;
     direction: rtl;
     white-space: nowrap;
     vertical-align: bottom;
+    position: relative;
     &-inner {
+      display: inline-block;
       direction: ltr;
     }
     &:before {
+      $gradient-width: 2rem;
       content: "";
-      width: 2rem;
+      width: $gradient-width;
       position: absolute;
       background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
       z-index: 9999;
       top: 0;
       left: 0;
-      right: 6rem;
+      right: $max-parent-width - $gradient-width;
       bottom: 0;
     }
   }
