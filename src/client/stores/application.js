@@ -1,6 +1,7 @@
 const dispatcher = require('../dispatcher').default;
 const {ReduceStore} = require('flux/utils');
 const justOnceStateInjector = require('./just-once-state-injector');
+const {asArray} = require('../../utils/object');
 
 class Store extends ReduceStore {
   getInitialState() {
@@ -42,15 +43,6 @@ class Store extends ReduceStore {
     }
     return newState;
   }
-}
-
-function asArray(o) {
-  if (Array.isArray(o)) {
-    return o;
-  } else if (typeof o === 'object') {
-    return [o];
-  }
-  return [];
 }
 
 module.exports.default = new Store(dispatcher);
