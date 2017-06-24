@@ -1,7 +1,5 @@
 .root {
   padding: 16px;
-
-  //background-color: lightcoral
 }
 
 .dropdown-menu {
@@ -11,4 +9,30 @@
 
 .query-keywords-input {
   border: none;
+}
+
+.category-path {
+  $category-path-height: 3rem;
+  &__parent-category {
+    display: inline-block;
+    max-width: 6rem;
+    overflow: hidden;
+    direction: rtl;
+    white-space: nowrap;
+    vertical-align: bottom;
+    &-inner {
+      direction: ltr;
+    }
+    &:before {
+      content: "";
+      width: 2rem;
+      position: absolute;
+      background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      right: 6rem;
+      bottom: 0;
+    }
+  }
 }

@@ -1,60 +1,95 @@
 const React = require('react');
 const s = require('./index.scss');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
-const {Icon, Breadcrumb, Dropdown} = require('semantic-ui-react');
+const {Breadcrumb, Dropdown} = require('semantic-ui-react');
 
-function CategoryPath(props) {
+class CategoryPath extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-  if (props.category) {
+  render() {
+    const category = this.props.category;
 
-    const isLeaf = props.category && props.category.IsLeaf === 'true';
-    const depthIndex = props.category ? Number(props.category.Depth) : -1;
-    const parentCategory = depthIndex > 0 ? {
-      name: props.category.CategoryPath.split(' > ')[depthIndex - 1],
-      id: props.category.ParentCategoryId
-    } : null;
-    return (<Breadcrumb>
+    if (category) {
 
-      {
-        parentCategory ? (
-            <Breadcrumb.Section link
-                                onClick={() => selectSearchCategory(parentCategory.id)}
-            >{parentCategory.name}</Breadcrumb.Section>
-        ) : null
-      }
+      const isLeaf = category && category.IsLeaf === 'true';
+      const depthIndex = category ? Number(category.Depth) : -1;
+      const parentCategory = depthIndex > 0 ? {
+        name: category.CategoryPath.split(' > ')[depthIndex - 1],
+        id: category.ParentCategoryId
+      } : null;
 
-      {parentCategory ? <Breadcrumb.Divider icon='right angle'/> : null }
+      return (
+          <div className={s.categoryPath}>
+            <Breadcrumb>
 
-      <Breadcrumb.Section>
-        {
-          isLeaf ? props.category.CategoryName
-              : (
-              <Dropdown text={props.category.CategoryName}>
-                <Dropdown.Menu className={s.dropdownMenu}>
-                  {props.category.ChildCategory.map(c => {
-                    return <Dropdown.Item key={c.CategoryId}
-                                          text={c.CategoryName}
-                                          value={c.CategoryId}
-                                          onClick={(e, item) => {
-                                            selectSearchCategory(item.value);
-                                          }}
-                    />;
-                  })}
-                </Dropdown.Menu>
-              </Dropdown>
-          )
-        }
-      </Breadcrumb.Section>
-    </Breadcrumb>);
+              {
+                parentCategory ?
+                    <div className={s.categoryPathParentCategory}>
+                      <div className={s.categoryPathParentCategoryInner}>
+                        <Breadcrumb.Section link
+                                            onClick={() => selectSearchCategory(parentCategory.id)}
+                        >{parentCategory.name}</Breadcrumb.Section>
+                        <Breadcrumb.Divider icon='right angle'/>
+                      </div>
+                    </div> : null
+              }
 
-  } else {
-    return <div></div>;
+              {/*{*/}
+              {/*parentCategory ? (*/}
+              {/*<Breadcrumb.Section link*/}
+              {/*onClick={() => selectSearchCategory(parentCategory.id)}*/}
+              {/*>{parentCategory.name}</Breadcrumb.Section>*/}
+              {/*) : null*/}
+              {/*}*/}
+
+              {/*{parentCategory ? <Breadcrumb.Divider icon='right angle'/> : null }*/}
+
+              <Breadcrumb.Section>
+                {
+                  isLeaf ? <Breadcrumb.Section>{category.CategoryName}</Breadcrumb.Section>
+                      : (
+                      <Dropdown text={category.CategoryName}>
+                        <Dropdown.Menu className={s.dropdownMenu}>
+                          {
+                            parentCategory ?
+                                <Dropdown.Item key={parentCategory.id}
+                                               text="（上に戻る）"
+                                               value={parentCategory.id}
+                                               onClick={(e, item) => {
+                                                 selectSearchCategory(item.value);
+                                               }}
+                                /> : null
+                          }
+                          {category.ChildCategory.map(c => {
+                            return <Dropdown.Item key={c.CategoryId}
+                                                  text={c.CategoryName}
+                                                  value={c.CategoryId}
+                                                  onClick={(e, item) => {
+                                                    selectSearchCategory(item.value);
+                                                  }}
+                            />;
+                          })}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                  )
+                }
+              </Breadcrumb.Section>
+            </Breadcrumb>
+          </div>
+      );
+
+    } else {
+      return <div />;
+    }
   }
 }
 
 class ConditionPane extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       queryKeywordsInputValue: this.props.lastQueryKeywords,
     };
@@ -70,7 +105,7 @@ class ConditionPane extends React.Component {
                    placeholder="商品のキーワード"
                    value={this.state.queryKeywordsInputValue}
                    onChange={(e) => this.setState({
-                    queryKeywordsInputValue: e.target.value,
+                     queryKeywordsInputValue: e.target.value,
                    })}
             />
           </form>

@@ -33,7 +33,7 @@ class Store extends ReduceStore {
         break;
 
       case 'update_goods':
-        const items = action.json.ResultSet.Result.Item;
+        const items = asArray(action.json.ResultSet.Result.Item);
         newState = Object.assign({}, state, {
           goods: items.map(i => {
             i['@largerImage'] = i.Image.replace('-thumb-', '-img600x450-');
@@ -45,6 +45,15 @@ class Store extends ReduceStore {
     }
     return newState;
   }
+}
+
+function asArray(o) {
+  if (Array.isArray(o)) {
+    return o;
+  } else if (typeof o === 'object') {
+    return [o];
+  }
+  return [];
 }
 
 module.exports.default = new Store(dispatcher);
