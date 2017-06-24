@@ -1,12 +1,11 @@
 const React = require('react');
 const {Icon} = require('semantic-ui-react');
-const s = require('./index.sass');
+const s = require('./index.scss');
 
 class UserName extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-
   }
 
   render() {

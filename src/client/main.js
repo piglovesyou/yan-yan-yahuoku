@@ -4,7 +4,6 @@ const React = require('react');
 const {BrowserRouter, Route} = require('react-router-dom');
 const Application = require('./components/application').default;
 
-// XXX: Workaround for libsass bug that doesn't recognize ":global()".
 require('./sass/global.scss');
 
 // Injection point of initial data in client-side.

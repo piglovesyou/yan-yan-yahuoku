@@ -1,6 +1,6 @@
 const React = require('react');
 const {Icon} = require('semantic-ui-react');
-const s = require('./index.sass');
+const s = require('./index.scss');
 
 module.exports.default = function GoodsPane(props) {
   return (

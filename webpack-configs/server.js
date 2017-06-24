@@ -6,7 +6,7 @@ module.exports = {
   "module": {
     "loaders": [
       {
-        "test": /\.sass$/,
+        "test": /\.scss$/,
         loaders: [
           cssLoaderConfig,
           'sass-loader'

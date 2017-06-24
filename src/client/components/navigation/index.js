@@ -1,5 +1,5 @@
 const React = require('react');
-const s = require('./index.sass');
+const s = require('./index.scss');
 const {Link} = require('react-router-dom');
 
 module.exports.default = function Navigation(props) {

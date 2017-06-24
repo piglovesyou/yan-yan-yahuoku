@@ -1,5 +1,5 @@
 const React = require('react');
-const s = require('./index.sass');
+const s = require('./index.scss');
 const {Breadcrumb, Dropdown} = require('semantic-ui-react');
 const {selectSearchCategory} = require('../../actions');
 

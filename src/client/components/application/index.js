@@ -8,7 +8,7 @@ const About = require('../about').default;
 const Home = require('../home').default;
 const GoodsPane = require('../goods-pane').default;
 const ConditionPane = require('../condition-pane').default;
-const s = require('./index.sass');
+const s = require('./index.scss');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
 

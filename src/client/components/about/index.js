@@ -1,5 +1,5 @@
 const React = require('react');
-const s = require('./index.sass');
+const s = require('./index.scss');
 
 module.exports.default = function About() {
   return (

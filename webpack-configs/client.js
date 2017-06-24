@@ -6,16 +6,6 @@ const cssLoaderConfig = require('./_css-loader')[isProduction ? 'production' : '
 const deepmerge = require('deepmerge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-const sassLoaderConfig = {
-  loader: 'sass-loader',
-  options: {
-    outputStyle: 'compressed',
-    includePath: [
-        Path.resolve(__dirname, '../node_modules')
-    ]
-  }
-};
-
 module.exports = {
   entry: './src/client/main',
   output: {
@@ -43,23 +33,19 @@ module.exports = {
         ].filter(e => !!e),
       },
       {
-        // XXX: Workaround for libsass bug that doesn't recognize ":global()".
         test: /\.scss$/,
         use: ExtractTextPlugin.extract([
           cssLoaderConfig,
-          sassLoaderConfig,
-        ]),
-      },
-      {
-        test: /\.sass$/,
-        use: ExtractTextPlugin.extract([
-          cssLoaderConfig,
-          deepmerge(sassLoaderConfig, {
+          {
+            loader: 'sass-loader',
             options: {
-              indentedSyntax: true,
+              outputStyle: 'compressed',
+              includePath: [
+                Path.resolve(__dirname, '../node_modules')
+              ]
             }
-          }),
-        ])
+          },
+        ]),
       },
     ]
   },
