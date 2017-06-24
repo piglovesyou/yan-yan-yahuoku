@@ -9,7 +9,6 @@ const LRU = require('lru-cache'),
 module.exports.wrapAsyncFn = (fn) => {
   return async function () {
     const key = Array.from(arguments).map(serialize).join('&') + '&';
-    // console.log(key);
     const cachedValue = cache.get(key);
     if (cachedValue) {
       return cachedValue;
