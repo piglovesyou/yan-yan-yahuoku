@@ -17,7 +17,7 @@ async function selectSearchCategory(categoryId) {
   executeQueryWithKeywords(store.getState().lastQueryKeywords)
 }
 
-async function executeQueryWithKeywords(keywords) {
+async function executeQueryWithKeywords(keywords = '') {
   const category = store.getState().lastCategoryId;
   const query = keywords.trim();
   const json = query
@@ -33,6 +33,5 @@ async function executeQueryWithKeywords(keywords) {
 async function requestAPI(endpoint, query) {
   const url = `/api/${endpoint}?${qs.stringify(query)}`;
   const res = await fetch(url);
-  const jsonString = await res.json();
-  return JSON.parse(jsonString);
+  return await res.json();
 }

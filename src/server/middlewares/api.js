@@ -3,6 +3,7 @@ const appToken = new Buffer(
     `${process.env.YAN_YAN_YAHUOKU_CONSUMER_KEY}:${process.env.YAN_YAN_YAHUOKU_CONSUMER_SECRET}`).toString('base64');
 const util = require('util');
 const request = util.promisify(require('request'));
+const {asArray} = require('../../utils/object');
 
 const express = require('express');
 const router = express.Router();
@@ -56,6 +57,7 @@ const requestAuctionAPIWithAppToken = (() => {
       method: 'GET',
     });
   }
+
   return require('../eval-cacher').wrapAsyncFn(requestAuctionAPIWithAppToken);
 })();
 
@@ -77,7 +79,29 @@ async function requestAuctionAPI(endpoint, params, access_token) {
   if (!body) {
     return;
   }
-  return convertJSONPToJSON(body);
+  const jsonString = convertJSONPToJSON(body);
+  if (endpoint === 'search' || endpoint === 'categoryLeaf' ) {
+    const json = JSON.parse(jsonString);
+    if (json.ResultSet == null) {
+      return JSON.stringify(json);
+    }
+    const items = asArray(json.ResultSet.Result.Item);
+    const detailBodies = await Promise.all(items.map(i => {
+      return requestAuctionAPIWithAppToken(endpointsOnAppToken['auctionItem'], {
+        auctionID: i.AuctionID
+      }).then(({body}) => body);
+    }));
+    const details = detailBodies.map(convertJSONPToJSON).map(JSON.parse).map(detailJson => {
+      return detailJson.ResultSet ? detailJson.ResultSet.Result : {};
+    });
+    json.ResultSet.Result.Item = items.map((item, index) => {
+      return Object.assign({}, item, {
+        Img: details[index] ? details[index].Img : []
+      });
+    });
+    return JSON.stringify(json);
+  }
+  return jsonString;
 }
 
 const errorJSONPrefix = ' {\n\"Error\" : ';
@@ -97,10 +121,10 @@ async function requestNewAccessToken(req) {
 }
 
 router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
-  const json = await requestAuctionAPI(req.params.endpoint, req.query, req.user && req.user.access_token);
+  const jsonString = await requestAuctionAPI(req.params.endpoint, req.query, req.user && req.user.access_token);
 
-  if (json.startsWith(errorJSONPrefix)) {
-    if (json === tokenExpiredErrorJSON) {
+  if (jsonString.startsWith(errorJSONPrefix)) {
+    if (jsonString === tokenExpiredErrorJSON) {
       const access_token = await requestNewAccessToken(req);
       if (access_token) {
         Object.assign(req.user, {access_token}); // TODO: Save it to session storage too
@@ -109,7 +133,10 @@ router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
     }
     res.status(500); // TODO: Replace to yahoo response code
   }
-  if (json) return res.json(json);
+  if (jsonString) {
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    return res.send(jsonString);
+  }
   next();
 });
 
