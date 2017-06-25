@@ -38,7 +38,7 @@ class Store extends ReduceStore {
         newState = Object.assign({}, state, {
           goods: items
         });
-        localStorage.setItem('v1.last_query_keywords', action.args.keywords);
+        localStorage.setItem('v1.last_query_keywords', action.args.query);
         break;
     }
     return newState;
