@@ -19,23 +19,20 @@ class GoodsPane extends React.Component {
         <div className={`${s.root}${className ? ' ' + className : ''}`}>
           {
             goods ? goods.slice(0, 4).map((g, index) => {
-              return (
-                  <div className={s.item}
-                       onMouseEnter={(e) => this.setState({hoveredItemId: g.AuctionID})}
-                       onMouseLeave={(e) => this.setState({hoveredItemId: undefined})}
-                       key={g.AuctionID}>
-                    <img className={s.img} key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
-                    {
-                      this.state.hoveredItemId === g.AuctionID
-                          ? (
-                          <div className={s.itemDetail} style={getLeftAndRight(index)}>
-                            {g.Title}
-                          </div>
-                      )
-                          : null
-                    }
-                  </div>
-              );
+              return [
+                <div className={s.item}
+                     onMouseEnter={(e) => this.setState({hoveredItemId: g.AuctionID})}
+                     onMouseLeave={(e) => this.setState({hoveredItemId: undefined})}
+                     key={g.AuctionID}>
+                  <img className={s.img} key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
+                </div>,
+                (this.state.hoveredItemId === g.AuctionID
+                    ? (
+                        <div key={`${g.AuctionID}:detail`} className={s.itemDetail} style={getLeftAndRight(index)}>
+                          {g.Title}
+                        </div>
+                    ) : null)
+              ];
             }) : null
           }
         </div>

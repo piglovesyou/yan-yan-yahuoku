@@ -39,6 +39,7 @@
       left: 0;
       right: $max-parent-width - $gradient-width;
       bottom: 0;
+      pointer-events: none;
     }
   }
 }

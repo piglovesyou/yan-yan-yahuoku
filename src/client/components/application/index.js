@@ -11,6 +11,7 @@ const ConditionPane = require('../condition-pane').default;
 const s = require('./index.scss');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
+const BottomBar = require('../bottom-bar').default;
 
 class Application extends React.Component {
   constructor(props) {
@@ -61,13 +62,8 @@ class Application extends React.Component {
 
             <GoodsPane className={s.goodsPane} {...this.state} />
 
-            {/*<div className={s.masterDetail}>*/}
-            {/*<Navigation className={s.masterDetailMaster}/>*/}
-            {/*<div className={s.masterDetailDetail}>*/}
-            {/*<Route path='/' exact render={() => <Home {...this.state} />}/>*/}
-            {/*<Route path='/about' render={() => <About {...this.state} />}/>*/}
-            {/*</div>*/}
-            {/*</div>*/}
+            <BottomBar {...this.state} />
+
           </Sidebar.Pusher>
 
         </Sidebar.Pushable>

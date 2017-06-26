@@ -1,10 +1,15 @@
 .root {
+  flex: 1;
   font-size: inherit;
   position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
 }
 .item {
   display: inline-block;
   width: 50%;
+  text-align: center;
 }
 .item__detail {
 position: absolute;

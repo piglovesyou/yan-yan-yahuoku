@@ -1,0 +1,16 @@
+.root {
+  display: flex;
+  flex-direction: row;
+}
+
+.history,
+.go-back,
+.go-forward {
+  padding: 32px;
+  font-size: 2rem;
+}
+
+.go-forward {
+  flex: 1;
+  text-align: right;
+}
