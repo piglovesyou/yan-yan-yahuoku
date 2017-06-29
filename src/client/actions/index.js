@@ -1,6 +1,6 @@
 const {dispatch} = require('../dispatcher');
 const qs = require('querystring');
-const store = require('../stores/application').default;
+const store = require('../../stores/application').default;
 
 module.exports.selectSearchCategory = selectSearchCategory;
 module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
@@ -14,15 +14,20 @@ async function selectSearchCategory(categoryId) {
     json,
     args: {categoryId},
   });
-  executeQueryWithKeywords(store.getState().lastQueryKeywords)
+  executeQueryWithKeywords(store.getState().lastQueryKeywords);
+}
+
+async function requestGoods(query, page = 1) {
+  const category = store.getState().lastCategoryId;
+  // TODO: if empty query width categoryId=0, stop requesting because it causes 400
+  return query
+      ? await requestAPI('search', {category, query, page})
+      : await requestAPI('categoryLeaf', {category, page});
 }
 
 async function executeQueryWithKeywords(keywords = '') {
-  const category = store.getState().lastCategoryId;
   const query = keywords.trim();
-  const json = query
-      ? await requestAPI('search', {category, query,})
-      : await requestAPI('categoryLeaf', {category});
+  const json = await requestGoods(query);
   dispatch({
     type: 'update_goods',
     json,
@@ -34,4 +39,28 @@ async function requestAPI(endpoint, query) {
   const url = `/api/${endpoint}?${qs.stringify(query)}`;
   const res = await fetch(url);
   return await res.json();
+}
+
+async function goToNextGoods() {
+  const s = store.getState();
+
+  const from = s.indexInCurrentPage + s.goodsCountInViewport;
+  const to = from + s.goodsCountInViewport;
+
+  const isNextLast = s.currentGoodsMetadata.firstResultPosition - 1 + s.currentGoodsMetadata.totalResultsReturned - 1 >= s.currentGoodsMetadata.totalResultsAvailable;
+  if (isNextLast) {
+    const nextGoodsInViewport = s.goodsInCurrPage.slice(from, to);
+    const nextIndexInCurrentPage = to;
+    // TODO: dispatch
+    return;
+  }
+
+  const toAcrossPage = s.currentGoodsMetadata.firstResultPosition - 1 + s.goodsCountInViewport > s.currentGoodsMetadata.totalResultsReturned;
+  if (toAcrossPage) {
+    const nextPage = s.currentPage + 1;
+    const json = await requestGoods(s.lastQueryKeywords, nextPage);
+    const nextGoodsInViewport = s.goodsInCurrPage.slice(from, to);
+    // TODO: dispatch
+    return;
+  }
 }

@@ -14,11 +14,11 @@ class GoodsPane extends React.Component {
   }
 
   render() {
-    const {className, goods} = this.props;
+    const {className, goodsInViewport} = this.props;
     return (
         <div className={`${s.root}${className ? ' ' + className : ''}`}>
           {
-            goods ? goods.slice(0, 4).map((g, index) => {
+            goodsInViewport.map((g, index) => {
               return [
                 <div className={s.item}
                      onMouseEnter={(e) => this.setState({hoveredItemId: g.AuctionID})}
@@ -33,7 +33,7 @@ class GoodsPane extends React.Component {
                         </div>
                     ) : null)
               ];
-            }) : null
+            })
           }
         </div>
     );

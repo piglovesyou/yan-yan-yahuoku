@@ -1,5 +1,5 @@
 const {render} = require('react-dom');
-const Store = require('./stores/application').default;
+const Store = require('../stores/application').default;
 const React = require('react');
 const {BrowserRouter, Route} = require('react-router-dom');
 const Application = require('./components/application').default;

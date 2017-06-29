@@ -28,14 +28,13 @@ function unloadModulesMiddleware(_, __, next) {
   next();
 }
 
+const defaultState = require('../../stores/default-state').default;
 function defaultRouteMiddleware(req, res) {
-  const data = {
-    title: 'ヤンヤンヤフオク',
+  const data = Object.assign({}, defaultState, {
     displayName: req.user && req.user.displayName,
-    messages: ['yeah!', 'baam!', 'baaa!'],
-  };
+  });
 
-  require('../../client/stores/just-once-state-injector').set(data);
+  require('../../stores/just-once-state-injector').set(data);
   const html = renderToString(React.createElement(StaticRouter, {
     location: req.url,
     context: {}

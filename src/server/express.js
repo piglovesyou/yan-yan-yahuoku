@@ -19,6 +19,9 @@ app.use(favicon(Path.resolve(__dirname, '../../public/favicon.ico')));
 app.use(session({
   store: sessionStore,
   secret: process.env.SESSION_SECRET || 'baa',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {secure: true}
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -31,7 +34,7 @@ app.use(passport.session());
 
 if (Number(process.env.NODE_API_DEV)) {
   // No config for static files
-} else if (isProduction ) {
+} else if (isProduction) {
   app.use(compression());
 } else {
   Object.assign(webpackConfig.output, {path: '/'});
