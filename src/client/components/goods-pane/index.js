@@ -24,7 +24,7 @@ class GoodsPane extends React.Component {
                      onMouseEnter={(e) => this.setState({hoveredItemId: g.AuctionID})}
                      onMouseLeave={(e) => this.setState({hoveredItemId: undefined})}
                      key={g.AuctionID}>
-                  <img className={s.img} key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
+                  <img className={s.img + ' ' + (isImageLandscape(g.Img.Image1) ? s.imgLandscape : s.imgPortlate)} key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
                 </div>,
                 (this.state.hoveredItemId === g.AuctionID
                     ? (
@@ -56,6 +56,14 @@ function getLeftAndRight(index) {
       right: (columns - leftIndex - 2) * widthUnit + '%',
     };
   }
+}
+
+function isImageLandscape(imgUrl) {
+  if (!imgUrl) return true;
+  const basename = require('path').basename(imgUrl);
+  const [_, w, h] = basename.match(/(\d+)x(\d+)/);
+  if (!w || !h) return true;
+  return Number(w) >= Number(h);
 }
 
 module.exports.default = GoodsPane;

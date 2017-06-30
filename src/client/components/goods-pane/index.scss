@@ -4,23 +4,36 @@
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  overflow: auto;
+  overflow: hidden;
 }
+
 .item {
   display: inline-block;
   width: 50%;
+  height: 50%;
   text-align: center;
+  overflow: hidden;
 }
+
+.img {
+  &--landscape {
+    height: 100%;
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+  &--portlate {
+    width: 100%;
+    margin-top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
 .item__detail {
-position: absolute;
+  position: absolute;
   background-color: white;
   padding: 16px;
   top: 0;
   bottom: 0;
   z-index: 9999;
   pointer-events: none;
-}
-.img {
-  vertical-align: top;
-  max-width: 100%;
 }
