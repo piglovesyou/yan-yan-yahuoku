@@ -31,10 +31,12 @@ class Store extends ReduceStore {
       case 'update_goods':
         const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
         const metadata = getGoodsMetadata(action.json);
+        const veryFirst = 0;
         newState = Object.assign({}, state, {
           currentPage: Math.ceil(metadata.firstResultPosition / metadata.totalResultsReturned),
-          goodsInCurrPage: items,
-          goodsInViewport: items.slice(0, state.goodsCountInViewport),
+          goodsFetched: items,
+          goodsInViewport: items.slice(veryFirst, state.goodsCountInViewport),
+          indexInCurrentPage: veryFirst,
           currentGoodsMetadata: metadata,
         });
         localStorage.setItem('v1.last_query_keywords', action.args.query);

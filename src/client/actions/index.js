@@ -43,24 +43,33 @@ async function requestAPI(endpoint, query) {
 
 async function goToNextGoods() {
   const s = store.getState();
+  const m = s.currentGoodsMetadata;
 
   const from = s.indexInCurrentPage + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const isNextLast = s.currentGoodsMetadata.firstResultPosition - 1 + s.currentGoodsMetadata.totalResultsReturned - 1 >= s.currentGoodsMetadata.totalResultsAvailable;
-  if (isNextLast) {
-    const nextGoodsInViewport = s.goodsInCurrPage.slice(from, to);
-    const nextIndexInCurrentPage = to;
-    // TODO: dispatch
-    return;
+  const isCacheAvailable = s.indexInCurrentPage + s.goodsCountInViewport <= s.goodsFetched.length;
+  if (isCacheAvailable) {
+    dispatch({
+    })
   }
 
-  const toAcrossPage = s.currentGoodsMetadata.firstResultPosition - 1 + s.goodsCountInViewport > s.currentGoodsMetadata.totalResultsReturned;
-  if (toAcrossPage) {
-    const nextPage = s.currentPage + 1;
-    const json = await requestGoods(s.lastQueryKeywords, nextPage);
-    const nextGoodsInViewport = s.goodsInCurrPage.slice(from, to);
-    // TODO: dispatch
-    return;
-  }
+  // const isEnding = m.firstResultPosition + m.totalResultsReturned > m.totalResultsAvailable;
+  // if (isEnding) {
+  //   const nextGoodsInViewport = s.goodsFetched.slice(from, to);
+  //   const nextIndexInCurrentPage = to;
+  //   // TODO: dispatch
+  //   return;
+  // }
+  //
+  // const toAcrossPage = m.firstResultPosition - 1 + s.goodsCountInViewport > m.totalResultsReturned;
+  // if (toAcrossPage) {
+  //   const nextPage = s.currentPage + 1;
+  //   const json = await requestGoods(s.lastQueryKeywords, nextPage);
+  //   const nextGoodsInViewport = s.goodsFetched.slice(from, to);
+  //   // TODO: dispatch
+  //   return;
+  // }
+  //
+
 }
