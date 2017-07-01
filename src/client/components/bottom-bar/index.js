@@ -1,6 +1,7 @@
 const React = require('react');
 const {Icon} = require('semantic-ui-react');
 const s = require('./index.scss');
+const {goToNextGoods} = require('../../actions');
 
 class BottomBar extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ class BottomBar extends React.Component {
           <div className={s.goBack}>
             <Icon name="arrow left"/>
           </div>
-          <div className={s.goForward}>
+          <div className={s.goForward} onClick={goToNextGoods}>
             <Icon name="arrow right"/>
           </div>
         </div>

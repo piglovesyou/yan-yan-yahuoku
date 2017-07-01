@@ -5,6 +5,7 @@ const {asArray} = require('../../utils/object');
 
 module.exports.selectSearchCategory = selectSearchCategory;
 module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
+module.exports.goToNextGoods = goToNextGoods;
 
 async function selectSearchCategory(categoryId) {
   const json = await requestAPI('categoryTree', {
@@ -53,9 +54,13 @@ async function goToNextGoods() {
   const from = s.indexInFetched + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const isCacheAvailable = s.indexInFetched + s.goodsCountInViewport <= s.goodsFetched.length;
+  const isCacheAvailable = from <= s.goodsFetched.length;
   if (isCacheAvailable) {
     dispatch({
+      type: 'update_goods',
+      goodsFetched: s.goodsFetched,
+      goodsMetadata: s.goodsMetadata,
+      indexInFetched: from,
     })
   }
 
