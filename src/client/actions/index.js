@@ -57,7 +57,7 @@ async function goToNextGoods() {
   const from = s.indexInFetched + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const availableInFetched = from <= s.goodsFetched.length;
+  const availableInFetched = to <= s.goodsFetched.length;
   if (availableInFetched) {
     const goodsInViewport = s.goodsFetched.slice(s.indexInFetched, s.indexInFetched + s.goodsCountInViewport);
     dispatch({
@@ -70,26 +70,23 @@ async function goToNextGoods() {
     return;
   }
 
-  const availableByFetching = m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsReturned;
+  const availableByFetching = m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable;
   if (availableByFetching) {
     const nextPage = s.currentFetchedPage + 1;
     const json = await requestGoods(s.lastQueryKeywords, nextPage);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-    const nextGoodsInViewport = s.goodsFetched.slice(from, to);
-    // TODO: dispatch
+    const goodsInViewport = s.goodsFetched.concat(goodsFetched).slice(from, to);
+    dispatch({
+      type: 'update_goods',
+      goodsFetched,
+      goodsMetadata,
+      indexInFetched: from % s.goodsCountInViewport,
+      goodsInViewport,
+    });
     return;
   }
 
-
-  // const isEnding = m.firstResultPosition + m.totalResultsReturned > m.totalResultsAvailable;
-  // if (isEnding) {
-  //   const nextGoodsInViewport = s.goodsFetched.slice(from, to);
-  //   const nextIndexInCurrentPage = to;
-  //   // TODO: dispatch
-  //   return;
-  // }
-  //
-
+  // TODO: fetch the last few
 }
 
 function getGoodsFromJSON(json) {

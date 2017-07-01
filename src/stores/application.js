@@ -36,7 +36,6 @@ class Store extends ReduceStore {
           indexInFetched,
           goodsInViewport
         } = action;
-        const veryFirst = 0;
         newState = Object.assign({}, state, {
           currentFetchedPage: Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned),
           goodsFetched,
