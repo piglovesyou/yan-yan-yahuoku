@@ -33,7 +33,9 @@ async function executeQueryWithKeywords(keywords = '') {
   const goodsMetadata = getGoodsMetadata(json);
   dispatch({
     type: 'update_goods',
-    goodsFetched, goodsMetadata,
+    goodsFetched,
+    goodsMetadata,
+    indexInFetched: 0,
     args: {query}
   });
 }
@@ -67,7 +69,7 @@ async function goToNextGoods() {
   //
   // const toAcrossPage = m.firstResultPosition - 1 + s.goodsCountInViewport > m.totalResultsReturned;
   // if (toAcrossPage) {
-  //   const nextPage = s.currentPage + 1;
+  //   const nextPage = s.currentFetchedPage + 1;
   //   const json = await requestGoods(s.lastQueryKeywords, nextPage);
   //   const nextGoodsInViewport = s.goodsFetched.slice(from, to);
   //   // TODO: dispatch

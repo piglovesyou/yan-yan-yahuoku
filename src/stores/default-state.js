@@ -9,7 +9,7 @@ module.exports.default = {
   indexInFetched: 0,
 
   // page of auction api (20 per page), not of viewport
-  currentPage: 1,
+  currentFetchedPage: 1,
   goodsFetched: [],
   goodsMetadata: {
     firstResultPosition: null,
