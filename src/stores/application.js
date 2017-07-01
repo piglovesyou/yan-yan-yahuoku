@@ -37,7 +37,7 @@ class Store extends ReduceStore {
           goodsFetched,
           goodsMetadata,
           goodsInViewport: goodsFetched.slice(veryFirst, state.goodsCountInViewport),
-          indexInGoodsFetched: veryFirst,
+          indexInFetched: veryFirst,
         });
         localStorage.setItem('v1.last_query_keywords', action.args.query);
         break;

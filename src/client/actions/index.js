@@ -48,10 +48,10 @@ async function goToNextGoods() {
   const s = store.getState();
   const m = s.goodsMetadata;
 
-  const from = s.indexInGoodsFetched + s.goodsCountInViewport;
+  const from = s.indexInFetched + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const isCacheAvailable = s.indexInGoodsFetched + s.goodsCountInViewport <= s.goodsFetched.length;
+  const isCacheAvailable = s.indexInFetched + s.goodsCountInViewport <= s.goodsFetched.length;
   if (isCacheAvailable) {
     dispatch({
     })
