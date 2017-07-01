@@ -1,6 +1,6 @@
 const {isProduction} = require('../src/server/env');
 
-const cssLoaderConfig = require('./_css-loader')[isProduction ? 'production' : 'develop'];
+const cssLoaderConfig = require('./_css-loader').default;
 
 module.exports = {
   "module": {

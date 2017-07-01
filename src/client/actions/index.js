@@ -96,7 +96,7 @@ async function goToNextGoods(next = true) {
           : from + goodsFetched.length,
       goodsInViewport,
     });
-    return;
+    // return;
   }
 
   // TODO: fetch the last few

@@ -2,7 +2,7 @@ const {isProduction} = require('../src/server/env');
 const webpack = require('webpack');
 const Path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const cssLoaderConfig = require('./_css-loader')[isProduction ? 'production' : 'develop'];
+const cssLoaderConfig = require('./_css-loader').default;
 const deepmerge = require('deepmerge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
@@ -40,9 +40,6 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
-              includePath: [
-                Path.resolve(__dirname, '../node_modules')
-              ]
             }
           },
         ]),

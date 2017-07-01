@@ -1,4 +1,8 @@
-const common = 'css-loader?modules&camelCase&localIdentName=';
+const {isProduction} = require('../src/server/env');
 
-module.exports.develop = `${common}[path]_[name]_[local]`;
-module.exports.production = `${common}[hash:base64:3]`;
+const localIdentName = isProduction
+    ? module.exports.production = '[hash:base64:3]'
+    : module.exports.develop = '[path]_[name]_[local]';
+
+module.exports.default = `css-loader?camelCase&localIdentName=${localIdentName}`;
+
