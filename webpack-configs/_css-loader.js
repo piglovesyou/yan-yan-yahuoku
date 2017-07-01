@@ -4,5 +4,5 @@ const localIdentName = isProduction
     ? module.exports.production = '[hash:base64:3]'
     : module.exports.develop = '[path]_[name]_[local]';
 
-module.exports.default = `css-loader?camelCase&localIdentName=${localIdentName}`;
+module.exports.default = `css-loader?modules&camelCase&localIdentName=${localIdentName}`;
 
