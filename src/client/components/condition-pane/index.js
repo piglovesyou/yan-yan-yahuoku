@@ -89,7 +89,7 @@ class ConditionPane extends React.Component {
                      queryKeywordsInputValue: e.target.value,
                    })}
             />
-            <Icon name="favorite" style={{fontSize: '1.5rem'}}/>
+            {/*<Icon name="favorite" style={{fontSize: '1.5rem'}}/>*/}
           </form>
         </div>
     );
