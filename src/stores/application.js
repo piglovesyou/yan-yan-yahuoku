@@ -30,14 +30,19 @@ class Store extends ReduceStore {
 
       case 'update_goods':
         // const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
-        const {goodsFetched, goodsMetadata, indexInFetched} = action;
+        const {
+          goodsFetched,
+          goodsMetadata,
+          indexInFetched,
+          goodsInViewport
+        } = action;
         const veryFirst = 0;
         newState = Object.assign({}, state, {
           currentFetchedPage: Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned),
           goodsFetched,
           goodsMetadata,
           indexInFetched,
-          goodsInViewport: goodsFetched.slice(indexInFetched, indexInFetched + state.goodsCountInViewport),
+          goodsInViewport,
         });
         if (action.args && typeof action.args.query === 'string') {
           localStorage.setItem('v1.last_query_keywords', action.args.query);

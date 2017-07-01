@@ -28,15 +28,18 @@ async function requestGoods(query, page = 1) {
 }
 
 async function executeQueryWithKeywords(keywords = '') {
+  const s = store.getState();
   const query = keywords.trim();
   const json = await requestGoods(query);
-  const goodsFetched = asArray(json.ResultSet && json.ResultSet.Result.Item);
-  const goodsMetadata = getGoodsMetadata(json);
+  const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+  const indexInFetched = 0;
+  const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
   dispatch({
     type: 'update_goods',
     goodsFetched,
     goodsMetadata,
-    indexInFetched: 0,
+    indexInFetched,
+    goodsInViewport,
     args: {query}
   });
 }
@@ -54,15 +57,29 @@ async function goToNextGoods() {
   const from = s.indexInFetched + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const isCacheAvailable = from <= s.goodsFetched.length;
-  if (isCacheAvailable) {
+  const availableInFetched = from <= s.goodsFetched.length;
+  if (availableInFetched) {
+    const goodsInViewport = s.goodsFetched.slice(s.indexInFetched, s.indexInFetched + s.goodsCountInViewport);
     dispatch({
       type: 'update_goods',
       goodsFetched: s.goodsFetched,
       goodsMetadata: s.goodsMetadata,
       indexInFetched: from,
-    })
+      goodsInViewport,
+    });
+    return;
   }
+
+  const availableByFetching = m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsReturned;
+  if (availableByFetching) {
+    const nextPage = s.currentFetchedPage + 1;
+    const json = await requestGoods(s.lastQueryKeywords, nextPage);
+    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+    const nextGoodsInViewport = s.goodsFetched.slice(from, to);
+    // TODO: dispatch
+    return;
+  }
+
 
   // const isEnding = m.firstResultPosition + m.totalResultsReturned > m.totalResultsAvailable;
   // if (isEnding) {
@@ -72,24 +89,21 @@ async function goToNextGoods() {
   //   return;
   // }
   //
-  // const toAcrossPage = m.firstResultPosition - 1 + s.goodsCountInViewport > m.totalResultsReturned;
-  // if (toAcrossPage) {
-  //   const nextPage = s.currentFetchedPage + 1;
-  //   const json = await requestGoods(s.lastQueryKeywords, nextPage);
-  //   const nextGoodsInViewport = s.goodsFetched.slice(from, to);
-  //   // TODO: dispatch
-  //   return;
-  // }
-  //
 
 }
 
-function getGoodsMetadata(json) {
-  const raw = json.ResultSet['@attributes'];
-  return Object.keys(raw).reduce((rv, k) => {
-    return Object.assign(rv, {
-      [k]: Number(raw[k])
-    });
-  }, {});
+function getGoodsFromJSON(json) {
+  const goodsFetched = asArray(json.ResultSet && json.ResultSet.Result.Item);
+  const goodsMetadata = getGoodsMetadata(json);
+  return {goodsFetched, goodsMetadata};
+
+  function getGoodsMetadata(json) {
+    const raw = json.ResultSet['@attributes'];
+    return Object.keys(raw).reduce((rv, k) => {
+      return Object.assign(rv, {
+        [k]: Number(raw[k])
+      });
+    }, {});
+  }
 }
 
