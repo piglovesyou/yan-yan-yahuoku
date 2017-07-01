@@ -6,12 +6,12 @@ module.exports.default = {
 
   goodsCountInViewport: 4,
   goodsInViewport: [], // To render
-  indexInCurrentPage: 0,
+  indexInGoodsFetched: 0,
 
   // page of auction api (20 per page), not of viewport
   currentPage: 1,
   goodsFetched: [],
-  currentGoodsMetadata: {
+  goodsMetadata: {
     firstResultPosition: null,
     totalResultsAvailable: null,
     totalResultsReturned: null

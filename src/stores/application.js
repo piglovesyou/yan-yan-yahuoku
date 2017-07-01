@@ -29,30 +29,21 @@ class Store extends ReduceStore {
         break;
 
       case 'update_goods':
-        const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
-        const metadata = getGoodsMetadata(action.json);
+        // const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
+        const {goodsFetched, goodsMetadata} = action;
         const veryFirst = 0;
         newState = Object.assign({}, state, {
-          currentPage: Math.ceil(metadata.firstResultPosition / metadata.totalResultsReturned),
-          goodsFetched: items,
-          goodsInViewport: items.slice(veryFirst, state.goodsCountInViewport),
-          indexInCurrentPage: veryFirst,
-          currentGoodsMetadata: metadata,
+          currentPage: Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned),
+          goodsFetched,
+          goodsMetadata,
+          goodsInViewport: goodsFetched.slice(veryFirst, state.goodsCountInViewport),
+          indexInGoodsFetched: veryFirst,
         });
         localStorage.setItem('v1.last_query_keywords', action.args.query);
         break;
     }
     return newState;
   }
-}
-
-function getGoodsMetadata(json) {
-  const raw = json.ResultSet['@attributes'];
-  return Object.keys(raw).reduce((rv, k) => {
-    return Object.assign(rv, {
-      [k]: Number(raw[k])
-    });
-  }, {});
 }
 
 module.exports.default = new Store(dispatcher);

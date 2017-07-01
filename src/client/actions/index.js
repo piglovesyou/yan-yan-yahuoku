@@ -1,6 +1,7 @@
 const {dispatch} = require('../dispatcher');
 const qs = require('querystring');
 const store = require('../../stores/application').default;
+const {asArray} = require('../../utils/object');
 
 module.exports.selectSearchCategory = selectSearchCategory;
 module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
@@ -28,9 +29,11 @@ async function requestGoods(query, page = 1) {
 async function executeQueryWithKeywords(keywords = '') {
   const query = keywords.trim();
   const json = await requestGoods(query);
+  const goodsFetched = asArray(json.ResultSet && json.ResultSet.Result.Item);
+  const goodsMetadata = getGoodsMetadata(json);
   dispatch({
     type: 'update_goods',
-    json,
+    goodsFetched, goodsMetadata,
     args: {query}
   });
 }
@@ -43,12 +46,12 @@ async function requestAPI(endpoint, query) {
 
 async function goToNextGoods() {
   const s = store.getState();
-  const m = s.currentGoodsMetadata;
+  const m = s.goodsMetadata;
 
-  const from = s.indexInCurrentPage + s.goodsCountInViewport;
+  const from = s.indexInGoodsFetched + s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const isCacheAvailable = s.indexInCurrentPage + s.goodsCountInViewport <= s.goodsFetched.length;
+  const isCacheAvailable = s.indexInGoodsFetched + s.goodsCountInViewport <= s.goodsFetched.length;
   if (isCacheAvailable) {
     dispatch({
     })
@@ -73,3 +76,13 @@ async function goToNextGoods() {
   //
 
 }
+
+function getGoodsMetadata(json) {
+  const raw = json.ResultSet['@attributes'];
+  return Object.keys(raw).reduce((rv, k) => {
+    return Object.assign(rv, {
+      [k]: Number(raw[k])
+    });
+  }, {});
+}
+
