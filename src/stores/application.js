@@ -20,7 +20,7 @@ class Store extends ReduceStore {
     let newState;
     switch (action.type) {
       case 'update_category':
-        const category = action.json.ResultSet.Result;
+        const {category} = action;
         newState = Object.assign({}, state, {
           category: category,
           lastCategoryId: category.CategoryId,

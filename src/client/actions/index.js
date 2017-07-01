@@ -11,7 +11,7 @@ async function selectSearchCategory(categoryId) {
   });
   dispatch({
     type: 'update_category',
-    json,
+    category: json.ResultSet.Result,
     args: {categoryId},
   });
   executeQueryWithKeywords(store.getState().lastQueryKeywords);
