@@ -50,16 +50,20 @@ async function requestAPI(endpoint, query) {
   return await res.json();
 }
 
-async function goToNextGoods() {
+async function goToNextGoods(next = true) {
   const s = store.getState();
   const m = s.goodsMetadata;
 
-  const from = s.indexInFetched + s.goodsCountInViewport;
+  const from = next
+      ? s.indexInFetched + s.goodsCountInViewport
+      : s.indexInFetched - s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const availableInFetched = to <= s.goodsFetched.length;
+  const availableInFetched = next
+      ? to <= s.goodsFetched.length
+      : from >= 0;
   if (availableInFetched) {
-    const goodsInViewport = s.goodsFetched.slice(s.indexInFetched, s.indexInFetched + s.goodsCountInViewport);
+    const goodsInViewport = s.goodsFetched.slice(from, to);
     dispatch({
       type: 'update_goods',
       goodsFetched: s.goodsFetched,
@@ -70,17 +74,26 @@ async function goToNextGoods() {
     return;
   }
 
-  const availableByFetching = m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable;
+  const availableByFetching = next
+      ? m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable
+      : s.currentFetchedPage > 1;
   if (availableByFetching) {
-    const nextPage = s.currentFetchedPage + 1;
+    const nextPage = next
+        ? s.currentFetchedPage + 1
+        : s.currentFetchedPage - 1;
+
     const json = await requestGoods(s.lastQueryKeywords, nextPage);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-    const goodsInViewport = s.goodsFetched.concat(goodsFetched).slice(from, to);
+    const goodsInViewport = next
+        ? s.goodsFetched.concat(goodsFetched).slice(from, to)
+        : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
     dispatch({
       type: 'update_goods',
       goodsFetched,
       goodsMetadata,
-      indexInFetched: from % s.goodsCountInViewport,
+      indexInFetched: next
+          ? to % s.goodsCountInViewport
+          : from + goodsFetched.length,
       goodsInViewport,
     });
     return;

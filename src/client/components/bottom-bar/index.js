@@ -14,10 +14,10 @@ class BottomBar extends React.Component {
           <div className={s.history}>
             <Icon name="history"/>
           </div>
-          <div className={s.goBack}>
+          <div className={s.goBack} onClick={goToNextGoods.bind(null, false)}>
             <Icon name="arrow left"/>
           </div>
-          <div className={s.goForward} onClick={goToNextGoods}>
+          <div className={s.goForward} onClick={goToNextGoods.bind(null, true)}>
             <Icon name="arrow right"/>
           </div>
         </div>
