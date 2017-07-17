@@ -4,14 +4,18 @@
   @extend %l-flex-container;
 }
 
+$h: 64px;
+
 .menu-icon,
 .auth-trigger {
-  padding: 16px;
-  height: 32px;
-  line-height: 32px;
+  padding: 0 16px;
+  height: $h;
+  line-height: $h;
   box-sizing: content-box;
 }
 
 .title {
   @extend %l-flex-expand;
+  height: $h;
+  line-height: $h;
 }
