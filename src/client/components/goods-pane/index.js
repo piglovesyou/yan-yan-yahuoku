@@ -2,8 +2,10 @@ const React = require('react');
 // const {Icon} = require('semantic-ui-react');
 const s = require('./index.scss');
 
+const {Route, Switch, IndexRoute, BrowserRouter, Match, Link} = require('react-router-dom');
 const columns = 2;
 const rows = 2;
+const {selectAuctionItem} = require('../../actions');
 
 class GoodsPane extends React.Component {
   constructor(props) {

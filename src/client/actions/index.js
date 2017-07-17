@@ -6,6 +6,16 @@ const {asArray} = require('../../utils/object');
 module.exports.selectSearchCategory = selectSearchCategory;
 module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
 module.exports.goToNextGoods = goToNextGoods;
+module.exports.selectAuctionItem = selectAuctionItem;
+
+async function selectAuctionItem(auctionItem) {
+  dispatch({
+    type: 'select-auction-item',
+    selectedAuctionItem: auctionItem,
+  });
+  // TODO
+  // history.push('/items/' + auctionItem.AuctionID);
+}
 
 async function selectSearchCategory(categoryId) {
   const json = await requestAPI('categoryTree', {

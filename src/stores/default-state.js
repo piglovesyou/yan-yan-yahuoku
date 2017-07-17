@@ -16,4 +16,6 @@ module.exports.default = {
     totalResultsAvailable: null,
     totalResultsReturned: null
   },
+
+  selectedAuctionItem: null,
 };

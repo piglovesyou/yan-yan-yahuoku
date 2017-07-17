@@ -19,6 +19,11 @@ class Store extends ReduceStore {
   reduce(state, action) {
     let newState;
     switch (action.type) {
+      case 'select-auction-item':
+        const {selectedAuctionItem} = action;
+        newState = Object.assign({}, state, {selectedAuctionItem});
+        break;
+
       case 'update_category':
         const {category} = action;
         newState = Object.assign({}, state, {

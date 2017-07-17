@@ -1,21 +1,21 @@
 @import "../../sass/_base-layout";
 
-.root {
+.toolbar {
   @extend %l-flex-container;
 }
 
 $h: 64px;
 
-// TODO refactor
-.menu-icon,
-.auth-trigger {
+//refactor
+.left-button,
+.right-button {
   padding: 0 16px;
   height: $h;
   line-height: $h;
   box-sizing: content-box;
 }
 
-.title {
+.center-label {
   @extend %l-flex-expand;
   height: $h;
   line-height: $h;

@@ -10,6 +10,7 @@ const {Sidebar, Icon, Menu} = require('semantic-ui-react');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
 const BottomBar = require('../bottom-bar').default;
 const Home = require('../home').default;
+const Detail = require('../detail').default;
 
 const {Route, Switch, IndexRoute, BrowserRouter, Match, Link} = require('react-router-dom');
 
@@ -61,6 +62,7 @@ class Application extends React.Component {
                 {/*refactor*/}
                 <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...this.state}/>}/>
                 <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu} />}/>
+                <Route exact path="/items/:id" component={() => <Detail {...this.state}/>}/>}/>
               </Switch>
 
             </Sidebar.Pusher>
