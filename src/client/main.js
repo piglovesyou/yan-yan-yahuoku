@@ -11,7 +11,7 @@ Object.assign(Store._state, window.__initialData);
 
 render((
     <BrowserRouter>
-      <Route path="/" component={Application} />
+      <Application/>
     </BrowserRouter>
 ), document.getElementById('application-container'));
 
