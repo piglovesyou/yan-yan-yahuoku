@@ -25,9 +25,17 @@ class UserName extends React.Component {
 module.exports.default = function Toolbar(props) {
   return (
       <div className={s.root}>
-        <Icon name="sidebar" size="big" onClick={props.onMenuButtonClick} tabIndex="0"/>
-        <h1 className={s.title}>{props.title}</h1>
-        <div>
+        <div className={s.menuIcon}>
+          <Icon name="sidebar"
+                size="big"
+                onClick={props.onMenuButtonClick}
+                tabIndex="0"
+          />
+        </div>
+        <div className={s.title}>
+          {props.children}
+        </div>
+        <div className={s.authTrigger}>
           {props.displayName
               ? <UserName {...props} />
               : <span><Icon name="privacy"/><a href="/auth/yj">auth</a></span>

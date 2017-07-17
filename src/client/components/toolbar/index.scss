@@ -2,12 +2,16 @@
 
 .root {
   @extend %l-flex-container;
+}
 
+.menu-icon,
+.auth-trigger {
   padding: 16px;
+  height: 32px;
+  line-height: 32px;
+  box-sizing: content-box;
 }
 
 .title {
   @extend %l-flex-expand;
-
-  margin: 0 16px;
 }

@@ -20,3 +20,8 @@
 :global([tabindex]) {
   cursor: pointer;
 }
+
+:global(i.icon:before) {
+  line-height: 1em;
+}
+

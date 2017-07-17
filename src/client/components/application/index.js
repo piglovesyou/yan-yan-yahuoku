@@ -56,9 +56,9 @@ class Application extends React.Component {
                           className={s.mainViewport}
                           onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
           >
-            <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu}/>
-
-            <ConditionPane {...this.state} />
+            <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu}>
+              <ConditionPane {...this.state} />
+            </Toolbar>
 
             <GoodsPane className={s.goodsPane} {...this.state} />
 
