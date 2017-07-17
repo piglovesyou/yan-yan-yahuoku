@@ -1,10 +1,15 @@
 const React = require('react');
-// const s = require('./index.scss');
+const s = require('./index.scss');
+const Toolbar = require('../toolbar').default;
 
-module.exports.default = function About() {
+module.exports.default = function About(props) {
   return (
     <div>
-      <h2>About</h2>
+      <Toolbar {...props}
+               onMenuButtonClick={props.toggleSidemenu}
+      >
+        <h1 className={s.h1}>About</h1>
+      </Toolbar>
     </div>
   );
 };

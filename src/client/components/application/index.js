@@ -11,7 +11,8 @@ const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions'
 const BottomBar = require('../bottom-bar').default;
 const Home = require('../home').default;
 
-const {Route, Switch, IndexRoute, BrowserRouter, Match} = require('react-router-dom');
+const {Route, Switch, IndexRoute, BrowserRouter, Match, Link} = require('react-router-dom');
+
 class Application extends React.Component {
   constructor(props) {
     super(props);
@@ -37,17 +38,17 @@ class Application extends React.Component {
           <Sidebar.Pushable className={s.root}>
             <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
                      vertical inverted>
-              <Menu.Item name='home'>
-                <Icon name='home'/>
-                Home
+
+              <Menu.Item name='home' className={s.sideMenuItem}>
+                <Link to="/" onClick={this.closeSidemenu} className={s.sideMenuItemLink}><Icon name='home'/> Home</Link>
               </Menu.Item>
-              <Menu.Item name='watchlist'>
-                <Icon name='heart'/>
-                Watch List
-              </Menu.Item>
-              <Menu.Item name='about'>
-                <Icon name='info'/>
-                About
+
+              {/*<Menu.Item name='watchlist'>*/}
+                {/*<Link to="/"><Icon name='heart'/> Watch List</Link> */}
+              {/*</Menu.Item>*/}
+
+              <Menu.Item name='about' className={s.sideMenuItem}>
+                <Link to="/about" onClick={this.closeSidemenu}><Icon name='info'/> About</Link>
               </Menu.Item>
             </Sidebar>
 
@@ -57,9 +58,9 @@ class Application extends React.Component {
             >
 
               <Switch>
-                <Route exact path="/" component={() =>
-                    <Home toggleSidemenu={this.toggleSidemenu}
-                          {...this.state}/>}/>
+                {/*refactor*/}
+                <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...this.state}/>}/>
+                <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu} />}/>
               </Switch>
 
             </Sidebar.Pusher>

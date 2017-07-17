@@ -15,3 +15,10 @@
   min-height: 0 !important;
 }
 
+:global(.ui):global(.menu) :global(.item).side-menu-item {
+  padding: 0;
+  & a {
+    display: block;
+    line-height: 80px;
+  }
+}
