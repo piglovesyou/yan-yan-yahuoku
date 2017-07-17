@@ -1,26 +1,6 @@
 const React = require('react');
-const {Icon} = require('semantic-ui-react');
+const {Icon, Popup} = require('semantic-ui-react');
 const s = require('./index.scss');
-
-class UserName extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
-        <span onMouseEnter={() => this.setState({isHovered: true})}
-              onMouseLeave={() => this.setState({isHovered: false})}
-        >
-      {this.state.isHovered
-          ? <a href="/auth/logout">Logout</a>
-          : <span><Icon name="user outline"/><a href="/auth/logout">{this.props.displayName}</a></span>
-      }
-  </span>
-    );
-  }
-}
 
 module.exports.default = function Toolbar(props) {
   return (
@@ -37,8 +17,12 @@ module.exports.default = function Toolbar(props) {
         </div>
         <div className={s.authTrigger}>
           {props.displayName
-              ? <UserName {...props} />
-              : <span><Icon name="privacy"/><a href="/auth/yj">auth</a></span>
+              ? <Popup trigger={<span><Icon name="lightning"/><a href="/auth/logout">{props.displayName}</a></span>}>
+                <Icon name="bomb"/>Sign out and destroy session
+              </Popup>
+              : <Popup content="Sign in to watch items"
+                       trigger={<span><Icon name="privacy"/><a href="/auth/yj">Sign in</a></span>}
+              />
           }
         </div>
       </div>

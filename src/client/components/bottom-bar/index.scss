@@ -3,11 +3,15 @@
   flex-direction: row;
 }
 
-.history,
+//.history,
 .go-back,
 .go-forward {
   padding: 24px;
   font-size: 2rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #eee;
+  }
 }
 
 .go-forward {
