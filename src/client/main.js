@@ -1,7 +1,7 @@
 const {render} = require('react-dom');
 const Store = require('../stores/application').default;
 const React = require('react');
-const {BrowserRouter, Route} = require('react-router-dom');
+const {BrowserRouter, Route, IndexRoute} = require('react-router-dom');
 const Application = require('./components/application').default;
 
 require('./sass/global.scss');
@@ -11,7 +11,7 @@ Object.assign(Store._state, window.__initialData);
 
 render((
     <BrowserRouter>
-      <Route component={Application}/>
+      <Route path="/" component={Application} />
     </BrowserRouter>
 ), document.getElementById('application-container'));
 

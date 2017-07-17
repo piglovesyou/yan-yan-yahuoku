@@ -1,17 +1,17 @@
 const React = require('react');
 const {Container} = require('flux/utils');
-const {Route} = require('react-router-dom');
+const {Route, BrowserRouter, Match} = require('react-router-dom');
 const Store = require('../../../stores/application').default;
 const Toolbar = require('../toolbar').default;
 const Navigation = require('../navigation').default;
 const About = require('../about').default;
-const Home = require('../home').default;
 const GoodsPane = require('../goods-pane').default;
 const ConditionPane = require('../condition-pane').default;
 const s = require('./index.scss');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
 const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
 const BottomBar = require('../bottom-bar').default;
+const Home = require('../home').default;
 
 class Application extends React.Component {
   constructor(props) {
@@ -42,8 +42,12 @@ class Application extends React.Component {
               <Icon name='home'/>
               Home
             </Menu.Item>
-            <Menu.Item name='gamepad'>
-              <Icon name='gamepad'/>
+            <Menu.Item name='watchlist'>
+              <Icon name='heart'/>
+              Watch List
+            </Menu.Item>
+            <Menu.Item name='about'>
+              <Icon name='info'/>
               About
             </Menu.Item>
           </Sidebar>
@@ -52,6 +56,10 @@ class Application extends React.Component {
                           className={s.mainViewport}
                           onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
           >
+          {/*<BrowserRouter>*/}
+            {/*<Match exactly pattern="/" component={Home} />*/}
+          {/*</BrowserRouter>*/}
+
             <Toolbar {...this.state} onMenuButtonClick={this.toggleSidemenu}>
               <ConditionPane {...this.state} />
             </Toolbar>
