@@ -14,7 +14,11 @@
   }
 }
 
-.go-forward {
+.go-back {
   flex: 1;
+  text-align: left;
+}
+.go-forward {
+  flex: 3;
   text-align: right;
 }

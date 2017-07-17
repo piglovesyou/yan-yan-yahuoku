@@ -44,11 +44,7 @@ class Application extends React.Component {
             </Menu.Item>
             <Menu.Item name='gamepad'>
               <Icon name='gamepad'/>
-              Games
-            </Menu.Item>
-            <Menu.Item name='camera'>
-              <Icon name='camera'/>
-              Channels
+              About
             </Menu.Item>
           </Sidebar>
 
