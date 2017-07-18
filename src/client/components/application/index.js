@@ -60,9 +60,9 @@ class Application extends React.Component {
 
               <Switch>
                 {/*refactor*/}
-                <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...this.state}/>}/>
+                <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...Object.assign({}, this.state, this.props)}/>}/>
                 <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu} />}/>
-                <Route exact path="/items/:id" component={() => <Detail {...this.state}/>}/>}/>
+                <Route exact path="/items/:id" component={() => <Detail {...this.state} />}/>
               </Switch>
 
             </Sidebar.Pusher>

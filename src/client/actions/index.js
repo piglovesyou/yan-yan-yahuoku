@@ -8,13 +8,12 @@ module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
 module.exports.goToNextGoods = goToNextGoods;
 module.exports.selectAuctionItem = selectAuctionItem;
 
-async function selectAuctionItem(auctionItem) {
+async function selectAuctionItem(auctionItem, history) {
   dispatch({
     type: 'select-auction-item',
     selectedAuctionItem: auctionItem,
   });
-  // TODO
-  // history.push('/items/' + auctionItem.AuctionID);
+  history.push('/items/' + auctionItem.AuctionID);
 }
 
 async function selectSearchCategory(categoryId) {
