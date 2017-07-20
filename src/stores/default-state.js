@@ -18,4 +18,7 @@ module.exports.default = {
   },
 
   selectedAuctionItem: null,
+
+  lastCategoryId: '',
+  lastQueryKeywords: '',
 };

@@ -47,8 +47,9 @@ class Store extends ReduceStore {
           goodsMetadata,
           indexInFetched,
           goodsInViewport,
+          lastQueryKeywords: action.args.query,
         });
-        if (action.args && typeof action.args.query === 'string') {
+        if (typeof action.args.query === 'string') {
           localStorage.setItem('v1.last_query_keywords', action.args.query);
         }
         break;
