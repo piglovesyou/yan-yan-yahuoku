@@ -54,7 +54,7 @@ class Application extends React.Component {
             </Sidebar>
 
             <Sidebar.Pusher dimmed={this.state.isSidebarVisible}
-                            className={s.mainViewport}
+                            className={s.mainViewport + ' route-' + getRouteName(this.props.location.pathname)}
                             onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
             >
 
@@ -81,3 +81,9 @@ class Application extends React.Component {
 }
 
 module.exports.default = Container.create(Application);
+
+const lengthToIgnoreForPathname = '/'.length;
+function getRouteName(pathname) {
+  return pathname.slice(lengthToIgnoreForPathname,
+      pathname.indexOf('/', lengthToIgnoreForPathname));
+}

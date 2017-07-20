@@ -8,23 +8,24 @@ class Detal extends React.Component {
   }
 
   render() {
-    const item = this.props;
+    const i = this.props;
+    console.log(i);
     return (
         <div className={s.root}>
           <div className={s.toolbar}>
             <div className={s.leftButton}>
               <Icon name="chevron left"
                     size="big"
-                    onClick={item.onMenuButtonClick}
+                    onClick={i.onMenuButtonClick}
                     tabIndex="0"
               />
             </div>
             <div className={s.centerLabel}>
-              {item.Title}
+              {i.Title}
             </div>
             <div className={s.rightButton}>
-              {item.displayName
-                  ? <Popup trigger={<span><Icon name="lightning"/><a href="/auth/logout">{item.displayName}</a></span>}>
+              {i.displayName
+                  ? <Popup trigger={<span><Icon name="lightning"/><a href="/auth/logout">{i.displayName}</a></span>}>
                     <Icon name="bomb"/>Sign out and destroy session
                   </Popup>
                   : <Popup content="Sign in to watch items"
@@ -33,6 +34,17 @@ class Detal extends React.Component {
               }
             </div>
           </div>
+
+          <div className={s.images}>
+            <img className={s.img} src={i.Img.Image1}/>
+          </div>
+
+          <h2 className={s.h2}>
+            <a href={i.AuctionItemUrl} target="_blank">{i.Title}</a>
+          </h2>
+
+          <div className={s.detail} dangerouslySetInnerHTML={{__html: i.Description}}></div>
+
         </div>
     );
   }

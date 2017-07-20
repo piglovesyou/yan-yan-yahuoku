@@ -14,6 +14,7 @@
 :global(#application-container) {
   @extend %l-flex-expand;
   @extend %l-flex-container;
+  width: 100%;
   margin: 0;
 }
 
@@ -25,3 +26,6 @@
   line-height: 1em;
 }
 
+:global(.route-items) {
+  overflow: auto !important;
+}

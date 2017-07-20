@@ -22,3 +22,22 @@ $h: 64px;
   white-space: nowrap;
   overflow: hidden;
 }
+
+.images {
+  text-align: center;
+}
+.img {
+  max-width: 100%;
+}
+
+.h2 {
+  margin-left: 24px;
+  margin-right: 24px;
+  font-weight: normal;
+}
+
+.detail {
+  :global(img) {
+    max-width: 100%;
+  }
+}
