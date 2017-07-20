@@ -41,16 +41,17 @@ class Store extends ReduceStore {
           indexInFetched,
           goodsInViewport
         } = action;
+        const query = action.args && action.args.query;
         newState = Object.assign({}, state, {
           currentFetchedPage: Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned),
           goodsFetched,
           goodsMetadata,
           indexInFetched,
           goodsInViewport,
-          lastQueryKeywords: action.args.query,
+          lastQueryKeywords: query,
         });
-        if (typeof action.args.query === 'string') {
-          localStorage.setItem('v1.last_query_keywords', action.args.query);
+        if (typeof query === 'string') {
+          localStorage.setItem('v1.last_query_keywords', query);
         }
         break;
     }
