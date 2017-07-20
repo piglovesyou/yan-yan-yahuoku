@@ -72,6 +72,13 @@ function requestAuctionAPIWithAccessToken(uri, params, access_token) {
   });
 }
 
+async function requestAuctionItem(auctionID) {
+  const {body} = await requestAuctionAPIWithAppToken(endpointsOnAppToken['auctionItem'],
+      {auctionID});
+  const detailJson = JSON.parse(convertJSONPToJSON(body));
+  return detailJson.ResultSet ? detailJson.ResultSet.Result : {};
+}
+
 async function requestAuctionAPI(endpoint, params, access_token) {
   const {body} = endpointsOnAppToken[endpoint] ? await requestAuctionAPIWithAppToken(endpointsOnAppToken[endpoint], params)
       : endpointsOnAccessToken[endpoint] ? await requestAuctionAPIWithAccessToken(endpointsOnAccessToken[endpoint], params, access_token)
@@ -80,20 +87,13 @@ async function requestAuctionAPI(endpoint, params, access_token) {
     return;
   }
   const jsonString = convertJSONPToJSON(body);
-  if (endpoint === 'search' || endpoint === 'categoryLeaf' ) {
+  if (endpoint === 'search' || endpoint === 'categoryLeaf') {
     const json = JSON.parse(jsonString);
-    if (json.ResultSet == null) {
+    if (!json.ResultSet) {
       return JSON.stringify(json);
     }
     const items = asArray(json.ResultSet.Result.Item);
-    const detailBodies = await Promise.all(items.map(i => {
-      return requestAuctionAPIWithAppToken(endpointsOnAppToken['auctionItem'], {
-        auctionID: i.AuctionID
-      }).then(({body}) => body);
-    }));
-    const details = detailBodies.map(convertJSONPToJSON).map(JSON.parse).map(detailJson => {
-      return detailJson.ResultSet ? detailJson.ResultSet.Result : {};
-    });
+    const details = await Promise.all(items.map(i => i.AuctionID).map(requestAuctionAPI));
     json.ResultSet.Result.Item = items.map((item, index) => {
       return Object.assign({}, item, {
         Img: details[index] ? details[index].Img : []
@@ -140,7 +140,10 @@ router.get('/:endpoint', async function proxyApiRequest(req, res, next) {
   next();
 });
 
-module.exports.default = router;
+module.exports = {
+  'default': router,
+  requestAuctionItem,
+};
 
 function convertJSONPToJSON(jsonp) {
   return jsonp.slice(jsonp.indexOf('(') + 1, jsonp.lastIndexOf(')'));

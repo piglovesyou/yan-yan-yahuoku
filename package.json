@@ -24,6 +24,7 @@
     "morgan": "~1.8.2",
     "passport": "^0.3.2",
     "passport-yj": "^1.0.6",
+    "path-to-regexp": "^1.7.0",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
     "request": "^2.81.0",

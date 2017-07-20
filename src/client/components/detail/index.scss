@@ -19,4 +19,6 @@ $h: 64px;
   @extend %l-flex-expand;
   height: $h;
   line-height: $h;
+  white-space: nowrap;
+  overflow: hidden;
 }
