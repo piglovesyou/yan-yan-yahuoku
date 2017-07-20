@@ -93,7 +93,7 @@ async function requestAuctionAPI(endpoint, params, access_token) {
       return JSON.stringify(json);
     }
     const items = asArray(json.ResultSet.Result.Item);
-    const details = await Promise.all(items.map(i => i.AuctionID).map(requestAuctionAPI));
+    const details = await Promise.all(items.map(i => i.AuctionID).map(requestAuctionItem));
     json.ResultSet.Result.Item = items.map((item, index) => {
       return Object.assign({}, item, {
         Img: details[index] ? details[index].Img : []

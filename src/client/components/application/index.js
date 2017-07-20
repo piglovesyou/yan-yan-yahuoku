@@ -35,6 +35,7 @@ class Application extends React.Component {
   }
 
   render() {
+    const routeClassName = this.props.location ? 'route-' + getRouteName(this.props.location.pathname) : '';
     return (
           <Sidebar.Pushable className={s.root}>
             <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
@@ -50,7 +51,7 @@ class Application extends React.Component {
             </Sidebar>
 
             <Sidebar.Pusher dimmed={this.state.isSidebarVisible}
-                            className={s.mainViewport + ' route-' + getRouteName(this.props.location.pathname)}
+                            className={s.mainViewport + ' ' + routeClassName}
                             onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
             >
 

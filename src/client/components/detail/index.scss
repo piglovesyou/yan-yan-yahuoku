@@ -37,6 +37,8 @@ $h: 64px;
 }
 
 .detail {
+  margin-left: 24px;
+  margin-right: 24px;
   :global(img) {
     max-width: 100%;
   }
