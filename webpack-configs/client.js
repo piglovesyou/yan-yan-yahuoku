@@ -6,6 +6,8 @@ const cssLoaderConfig = require('./_css-loader').default;
 const deepmerge = require('deepmerge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
+// TODO: enable "isProduction" in production
+
 module.exports = {
   entry: './src/client/main',
   output: {
@@ -19,7 +21,7 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: [
-          isProduction && {loader: 'webpack-unassert-loader'},
+          // isProduction && {loader: 'webpack-unassert-loader'},
           {
             loader: 'babel-loader',
             query: {
@@ -48,6 +50,6 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('stylesheets/main.css'),
-    isProduction && new UglifyJSPlugin(),
+    // isProduction && new UglifyJSPlugin(),
   ].filter(e => !!e),
 };
