@@ -87,6 +87,7 @@ async function goToNextGoods(next = true) {
       : from >= 0;
   if (availableInFetched) {
     const goodsInViewport = s.goodsFetched.slice(from, to);
+    await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
     dispatch({
       type: 'update_goods',
       goodsFetched: s.goodsFetched,
@@ -110,6 +111,7 @@ async function goToNextGoods(next = true) {
     const goodsInViewport = next
         ? s.goodsFetched.concat(goodsFetched).slice(from, to)
         : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
+    await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
     dispatch({
       type: 'update_goods',
       goodsFetched,
@@ -140,3 +142,26 @@ function getGoodsFromJSON(json) {
   }
 }
 
+function waitUntilImgPreloaded(src) {
+  let containerEl = document.getElementById('img-preloader');
+  if (!containerEl) {
+    containerEl = document.body.appendChild(document.createElement('div'));
+    containerEl.id = 'img-preloader';
+  }
+  return new Promise((resolve, reject) => {
+    const imgEl = document.createElement('img');
+    imgEl.onload = () => {
+      resolve();
+      removeNode(imgEl);
+    };
+    imgEl.onerror = () => {
+      reject();
+      removeNode(imgEl);
+    };
+    imgEl.src = src;
+    containerEl.appendChild(imgEl);
+  });
+}
+function removeNode(el) {
+  el.parentNode.removeChild(el);
+}

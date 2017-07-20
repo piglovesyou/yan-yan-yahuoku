@@ -29,3 +29,12 @@
 :global(.route-items) {
   overflow: auto !important;
 }
+
+:global(#img-preloader) {
+  width: 1px;
+  height: 1px;
+  visibility: hidden;
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+}
