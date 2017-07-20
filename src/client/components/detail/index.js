@@ -1,6 +1,7 @@
 const React = require('react');
 const s = require('./index.scss');
 const {Icon, Popup} = require('semantic-ui-react');
+const {goBackFromDetail} = require('../../actions');
 
 class Detal extends React.Component {
   constructor(props) {
@@ -9,14 +10,14 @@ class Detal extends React.Component {
 
   render() {
     const i = this.props;
-    console.log(i);
     return (
         <div className={s.root}>
           <div className={s.toolbar}>
-            <div className={s.leftButton}>
+            <div className={s.leftButton}
+                 onClick={goBackFromDetail.bind(null, this.props.history)}
+            >
               <Icon name="chevron left"
                     size="big"
-                    onClick={i.onMenuButtonClick}
                     tabIndex="0"
               />
             </div>

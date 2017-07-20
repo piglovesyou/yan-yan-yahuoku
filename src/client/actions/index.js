@@ -3,10 +3,22 @@ const qs = require('querystring');
 const store = require('../../stores/application').default;
 const {asArray} = require('../../utils/object');
 
-module.exports.selectSearchCategory = selectSearchCategory;
-module.exports.executeQueryWithKeywords = executeQueryWithKeywords;
-module.exports.goToNextGoods = goToNextGoods;
-module.exports.selectAuctionItem = selectAuctionItem;
+module.exports = {
+  selectSearchCategory,
+  executeQueryWithKeywords,
+  goToNextGoods,
+  selectAuctionItem,
+  goBackFromDetail,
+};
+
+function goBackFromDetail(history) {
+  const {goodsInViewport} = store.getState();
+  if (goodsInViewport.length) {
+    history.goBack();
+  } else {
+    history.push('/');
+  }
+}
 
 async function selectAuctionItem(i, history) {
   const auctionID = i.AuctionID;

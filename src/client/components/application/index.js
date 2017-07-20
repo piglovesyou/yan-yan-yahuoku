@@ -44,10 +44,6 @@ class Application extends React.Component {
                 <Link to="/" onClick={this.closeSidemenu} className={s.sideMenuItemLink}><Icon name='home'/> Home</Link>
               </Menu.Item>
 
-              {/*<Menu.Item name='watchlist'>*/}
-                {/*<Link to="/"><Icon name='heart'/> Watch List</Link> */}
-              {/*</Menu.Item>*/}
-
               <Menu.Item name='about' className={s.sideMenuItem}>
                 <Link to="/about" onClick={this.closeSidemenu}><Icon name='info'/> About</Link>
               </Menu.Item>
@@ -62,7 +58,7 @@ class Application extends React.Component {
                 {/*refactor*/}
                 <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...Object.assign({}, this.state, this.props)}/>}/>
                 <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu} />}/>
-                <Route exact path="/items/:id" component={() => <Detail {...this.state.selectedAuctionItem} />}/>
+                <Route exact path="/items/:id" component={() => <Detail {...Object.assign({}, this.state.selectedAuctionItem, this.props)} />}/>
               </Switch>
 
             </Sidebar.Pusher>
