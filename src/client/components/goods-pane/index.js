@@ -10,9 +10,9 @@ const {selectAuctionItem} = require('../../actions');
 class GoodsPane extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hoveredItemId: undefined
-    };
+    // this.state = {
+    //   hoveredItemId: undefined
+    // };
   }
 
   render() {
@@ -21,21 +21,14 @@ class GoodsPane extends React.Component {
         <div className={`${s.root}${className ? ' ' + className : ''}`}>
           {
             goodsInViewport.map((g, index) => {
-              return [
-                <div className={s.item}
-                     onMouseEnter={(e) => this.setState({hoveredItemId: g.AuctionID})}
-                     onMouseLeave={(e) => this.setState({hoveredItemId: undefined})}
-                     onClick={selectAuctionItem.bind(null, g, this.props.history)}
-                     key={g.AuctionID}>
-                  <img className={s.img + ' ' + (isImageLandscape(g.Img.Image1) ? s.imgLandscape : s.imgPortlate)} key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
-                </div>,
-                (this.state.hoveredItemId === g.AuctionID
-                    ? (
-                        <div key={`${g.AuctionID}:detail`} className={s.itemDetail} style={getLeftAndRight(index)}>
-                          {g.Title}
-                        </div>
-                    ) : null)
-              ];
+              return (
+                  <div className={s.item}
+                       onClick={selectAuctionItem.bind(null, g, this.props.history)}
+                       key={g.AuctionID}>
+                    <img className={s.img + ' ' + (isImageLandscape(g.Img.Image1) ? s.imgLandscape : s.imgPortlate)}
+                         key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
+                  </div>
+              );
             })
           }
         </div>

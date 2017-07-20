@@ -24,16 +24,16 @@ class Detal extends React.Component {
             <div className={s.centerLabel}>
               {i.Title}
             </div>
-            <div className={s.rightButton}>
-              {i.displayName
-                  ? <Popup trigger={<span><Icon name="lightning"/><a href="/auth/logout">{i.displayName}</a></span>}>
-                    <Icon name="bomb"/>Sign out and destroy session
-                  </Popup>
-                  : <Popup content="Sign in to watch items"
-                           trigger={<span><Icon name="privacy"/><a href="/auth/yj">Sign in</a></span>}
-                  />
-              }
-            </div>
+            {/*<div className={s.rightButton}>*/}
+              {/*{i.displayName*/}
+                  {/*? <Popup trigger={<span><Icon name="lightning"/><a href="/auth/logout">{i.displayName}</a></span>}>*/}
+                    {/*<Icon name="bomb"/>Sign out and destroy session*/}
+                  {/*</Popup>*/}
+                  {/*: <Popup content="Sign in to watch items"*/}
+                           {/*trigger={<span><Icon name="privacy"/><a href="/auth/yj">Sign in</a></span>}*/}
+                  {/*/>*/}
+              {/*}*/}
+            {/*</div>*/}
           </div>
 
           <div className={s.images}>
