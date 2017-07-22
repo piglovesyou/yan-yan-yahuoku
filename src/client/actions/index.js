@@ -2,11 +2,11 @@ const {dispatch} = require('../dispatcher');
 const qs = require('querystring');
 const store = require('../../stores/application').default;
 const {asArray} = require('../../utils/object');
-const COUNT_PER_PAGE = 20; // Auction API rule
+const {COUNT_PER_PAGE} = require('../../utils/const');
 
 module.exports = {
   selectSearchCategory,
-  executeQueryWithKeywords,
+  loadFirstPage,
   goToNextGoods,
   selectAuctionItem,
   goBackFromDetail,
@@ -40,71 +40,59 @@ async function selectSearchCategory(categoryId) {
     category: json.ResultSet.Result,
     args: {categoryId},
   });
-  executeQueryWithKeywords();
+  loadFirstPage();
 }
 
-async function requestGoods(category, query, page) {
+async function requestAuctionItems(category, query, page) {
   // TODO: if empty query width categoryId=0, stop requesting because it causes 400
   return query
       ? await requestAPI('search', {category, query, page})
       : await requestAPI('categoryLeaf', {category, page});
 }
 
-async function executeQueryWithKeywords(keywords = store.getState().lastQueryKeywords,
-                                        category = store.getState().lastCategoryId) {
+async function loadFirstPage(keywords = store.getState().lastQueryKeywords,
+                             category = store.getState().lastCategoryId) {
   const s = store.getState();
   const query = keywords.trim();
-  const json = await requestGoods(category, query, 1);
+  const json = await requestAuctionItems(category, query, 1);
   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
   const indexInFetched = 0;
   const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
+  const {totalResultsAvailable} = goodsMetadata;
   dispatch({
     type: 'load_first_page',
+    totalResultsAvailable,
     goodsFetched,
-    goodsMetadata,
-    indexInFetched,
     goodsInViewport,
     args: {query}
   });
 }
 
-async function requestAPI(endpoint, query) {
-  const url = `/api/${endpoint}?${qs.stringify(query)}`;
-  const res = await fetch(url);
-  return await res.json();
-}
-
 async function goToNextGoods(isForward = true) {
   const s = store.getState();
-  // const m = s.goodsMetadata;
 
   const {
     collected,
     pageOfFirstItem,
     itemsOfFirstItem,
-    metaOfFirstItem,
     indexOfFirstItem,
     pageOfLastItem,
     itemsOfLastItem,
-    metaOfLastItem,
     indexOfLastItem,
   } = await collectAuctionItems({
         collected: undefined,
         pageOfFirstItem: undefined,
         itemsOfFirstItem: undefined,
-        metaOfFirstItem: undefined,
         indexOfFirstItem: undefined,
         pageOfLastItem: undefined,
         itemsOfLastItem: undefined,
-        metaOfLastItem: undefined,
         indexOfLastItem: undefined,
       },
       isForward ? s.pageOfLastItem : s.pageOfFirstItem,
       isForward ? s.itemsOfLastItem : s.itemsOfFirstItem,
-      isForward ? s.metaOfLastItem : s.metaOfFirstItem,
       isForward ? s.indexOfLastItem + 1 : s.indexOfFirstItem - 1, // Next index to try
       s.lastCategoryId, s.lastQueryKeywords, isForward,
-      s.goodsCountInViewport, getLastPage(s.metaOfFirstItem));
+      s.goodsCountInViewport, getLastPage(s.totalResultsAvailable));
 
   if (!collected) {
     return;
@@ -118,11 +106,9 @@ async function goToNextGoods(isForward = true) {
       goodsInViewport: collected,
       pageOfFirstItem,
       itemsOfFirstItem,
-      metaOfFirstItem,
       indexOfFirstItem,
       pageOfLastItem,
       itemsOfLastItem,
-      metaOfLastItem,
       indexOfLastItem,
     });
   } else {
@@ -132,93 +118,25 @@ async function goToNextGoods(isForward = true) {
       goodsInViewport: collected,
       pageOfFirstItem: pageOfLastItem,
       itemsOfFirstItem: itemsOfLastItem,
-      metaOfFirstItem: metaOfLastItem,
       indexOfFirstItem: indexOfLastItem,
       pageOfLastItem: pageOfFirstItem,
       itemsOfLastItem: itemsOfFirstItem,
-      metaOfLastItem: metaOfFirstItem,
       indexOfLastItem: indexOfFirstItem,
     });
   }
-
-  // dispatch({
-  //   type: 'update_goods_index',
-  //
-  //   pageOfFirstItem: currentFetchedPage,
-  //   itemsOfFirstItem: goodsFetched,
-  //   indexOfFirstItem: indexInFetched,
-  //   metaOfFirstItem: goodsMetadata,
-  //
-  //   pageOfLastItem: currentFetchedPage,
-  //   itemsOfLastItem: goodsFetched,
-  //   indexOfLastItem: indexInFetched,
-  //   metaOfLastItem: goodsMetadata,
-  // })
-
-
-  // const from = isForward
-  //     ? s.indexInFetched + s.goodsCountInViewport
-  //     : s.indexInFetched - s.goodsCountInViewport;
-  // const to = from + s.goodsCountInViewport;
-  //
-  // const availableInFetched = isForward
-  //     ? to <= s.goodsFetched.length
-  //     : from >= 0;
-  // if (availableInFetched) {
-  //   const goodsInViewport = s.goodsFetched.slice(from, to);
-  //   await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
-  //   dispatch({
-  //     type: 'load_first_page',
-  //     goodsFetched: s.goodsFetched,
-  //     goodsMetadata: s.goodsMetadata,
-  //     indexInFetched: from,
-  //     goodsInViewport,
-  //   });
-  //   return;
-  // }
-  //
-  // const availableByFetching = isForward
-  //     ? m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable
-  //     : s.currentFetchedPage > 1;
-  // if (availableByFetching) {
-  //   const nextPage = isForward
-  //       ? s.currentFetchedPage + 1
-  //       : s.currentFetchedPage - 1;
-  //
-  //   const json = await requestGoods(s.lastCategoryId, s.lastQueryKeywords, nextPage);
-  //   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-  //   const goodsInViewport = isForward
-  //       ? s.goodsFetched.concat(goodsFetched).slice(from, to)
-  //       : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
-  //   await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
-  //   dispatch({
-  //     type: 'update_goods',
-  //     goodsFetched,
-  //     goodsMetadata,
-  //     indexInFetched: isForward
-  //         ? to % s.goodsCountInViewport
-  //         : from + goodsFetched.length,
-  //     goodsInViewport,
-  //   });
-  //   // return;
-  // }
-  //
-  // // TODO: fetch the last few
 }
 
 async function collectAuctionItems(accumulator,
-                                   pageOfItem, itemsOfItem, goodsMetadata, indexOfItem,
+                                   pageOfItem, itemsOfItem, indexOfItem,
                                    category, query, isForward,
                                    goodsCountInViewport, lastPage) {
   let {
     collected,
     pageOfFirstItem,
     itemsOfFirstItem,
-    metaOfFirstItem,
     indexOfFirstItem,
     pageOfLastItem,
     itemsOfLastItem,
-    metaOfLastItem,
     indexOfLastItem,
   } = accumulator;
 
@@ -235,32 +153,16 @@ async function collectAuctionItems(accumulator,
       collected = [];
       pageOfFirstItem = pageOfItem;
       itemsOfFirstItem = itemsOfItem;
-      metaOfFirstItem = goodsMetadata;
       indexOfFirstItem = indexOfItem;
     }
 
     // Update everytime to catch the last page and index
     pageOfLastItem = pageOfItem;
     itemsOfLastItem = itemsOfItem;
-    metaOfLastItem = goodsMetadata;
     indexOfLastItem = indexOfItem;
 
     collected.push(itemsOfItem[indexOfItem]);
-    return collectAuctionItems(
-        {
-          collected,
-          pageOfFirstItem,
-          itemsOfFirstItem,
-          metaOfFirstItem,
-          indexOfFirstItem,
-          pageOfLastItem,
-          itemsOfLastItem,
-          metaOfLastItem,
-          indexOfLastItem,
-        },
-        pageOfItem, itemsOfItem, goodsMetadata, indexOfItem + (isForward ? 1 : -1),
-        category, query, isForward,
-        goodsCountInViewport, lastPage);
+    indexOfItem = indexOfItem + (isForward ? 1 : -1);
 
   } else {
     // Flip page
@@ -271,28 +173,33 @@ async function collectAuctionItems(accumulator,
     if (pageOfItem <= 0) {
       // Auction API returns the same items with page "1" and "0".
       // We don't want results of page "0" so we'll finish it.
-      return undefined;
+      return accumulator;
     }
 
-    const json = await requestGoods(category, query, pageOfItem);
-    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-
-    return collectAuctionItems(
-        {
-          collected,
-          pageOfFirstItem,
-          itemsOfFirstItem,
-          metaOfFirstItem,
-          indexOfFirstItem,
-          pageOfLastItem,
-          itemsOfLastItem,
-          metaOfLastItem,
-          indexOfLastItem,
-        },
-        pageOfItem, goodsFetched, goodsMetadata, indexOfItem,
-        category, query, isForward,
-        goodsCountInViewport, lastPage);
+    const json = await requestAuctionItems(category, query, pageOfItem);
+    const {goodsFetched} = getGoodsFromJSON(json);
+    itemsOfItem = goodsFetched;
   }
+
+  return collectAuctionItems({
+        collected,
+        pageOfFirstItem,
+        itemsOfFirstItem,
+        indexOfFirstItem,
+        pageOfLastItem,
+        itemsOfLastItem,
+        indexOfLastItem,
+      },
+      pageOfItem, itemsOfItem, indexOfItem,
+      category, query, isForward,
+      goodsCountInViewport, lastPage);
+}
+
+
+async function requestAPI(endpoint, query) {
+  const url = `/api/${endpoint}?${qs.stringify(query)}`;
+  const res = await fetch(url);
+  return await res.json();
 }
 
 function getGoodsFromJSON(json) {
@@ -330,10 +237,11 @@ function waitUntilImgPreloaded(src) {
     containerEl.appendChild(imgEl);
   });
 }
+
 function removeNode(el) {
   el.parentNode.removeChild(el);
 }
 
-function getLastPage(m) {
-  return Math.ceil(m.totalResultsAvailable / COUNT_PER_PAGE);
+function getLastPage(totalResultsAvailable) {
+  return Math.ceil(totalResultsAvailable / COUNT_PER_PAGE);
 }

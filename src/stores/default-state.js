@@ -17,6 +17,7 @@ module.exports.default = {
     totalResultsReturned: null
   },
 
+  totalResultsAvailable: -1,
 
   // Experiment
   pageOfFirstItem: 1,

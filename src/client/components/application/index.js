@@ -7,7 +7,7 @@ const GoodsPane = require('../goods-pane').default;
 const ConditionPane = require('../condition-pane').default;
 const s = require('./index.scss');
 const {Sidebar, Icon, Menu} = require('semantic-ui-react');
-const {selectSearchCategory, executeQueryWithKeywords} = require('../../actions');
+const {selectSearchCategory, loadFirstPage} = require('../../actions');
 const BottomBar = require('../bottom-bar').default;
 const Home = require('../home').default;
 const Detail = require('../detail').default;
@@ -31,7 +31,7 @@ class Application extends React.Component {
 
   componentDidMount() {
     selectSearchCategory(this.state.lastCategoryId);
-    executeQueryWithKeywords(this.state.lastQueryKeywords);
+    loadFirstPage(this.state.lastQueryKeywords);
   }
 
   render() {

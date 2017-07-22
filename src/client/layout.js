@@ -3,7 +3,7 @@ module.exports.default = ([data, contentHTML]) => {
 <html>
   <head>
     <title>${data.title}</title>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css"></link>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css" />
     <link rel='stylesheet' href='/stylesheets/main.css' />
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
