@@ -3,6 +3,7 @@ const {ReduceStore} = require('flux/utils');
 const justOnceStateInjector = require('./just-once-state-injector');
 // const {asArray} = require('../utils/object');
 const defaultState = require('./default-state').default;
+const blacklist = require('blacklist');
 
 class Store extends ReduceStore {
   getInitialState() {
@@ -51,18 +52,22 @@ class Store extends ReduceStore {
           lastQueryKeywords: query,
 
           // Experiment
-          pageFetchedForward: currentFetchedPage,
-          itemsFetchedForward: goodsFetched,
-          indexInFetchedForward: indexInFetched,
-          metaFetchedForward: goodsMetadata,
-          pageFetchedBackward: currentFetchedPage,
-          itemsFetchedBackward: goodsFetched,
-          indexInFetchedBackward: indexInFetched,
-          metaFetchedBackward: goodsMetadata,
+          pageOfFirstItem: currentFetchedPage,
+          itemsOfFirstItem: goodsFetched,
+          indexOfFirstItem: indexInFetched,
+          metaOfFirstItem: goodsMetadata,
+          pageOfLastItem: currentFetchedPage,
+          itemsOfLastItem: goodsFetched,
+          indexOfLastItem: indexInFetched,
+          metaOfLastItem: goodsMetadata,
         });
         if (typeof query === 'string') {
           localStorage.setItem('v1.last_query_keywords', query);
         }
+        break;
+
+      case 'update_goods_index':
+        newState = Object.assign({}, state, blacklist(action, 'type'));
         break;
     }
     return newState;

@@ -19,18 +19,18 @@ module.exports.default = {
 
 
   // Experiment
-  pageFetchedForward: 1,
-  itemsFetchedForward: [],
-  indexInFetchedForward: 0,
-  metaFetchedForward: {
+  pageOfFirstItem: 1,
+  itemsOfFirstItem: [],
+  indexOfFirstItem: 0,
+  metaOfFirstItem: {
     firstResultPosition: null,
     totalResultsAvailable: null,
     totalResultsReturned: null
   },
-  pageFetchedBackward: 1,
-  itemsFetchedBackward: [],
-  indexInFetchedBackward: 0,
-  metaFetchedBackward: {
+  pageOfLastItem: 1,
+  itemsOfLastItem: [],
+  indexOfLastItem: 0,
+  metaOfLastItem: {
     firstResultPosition: null,
     totalResultsAvailable: null,
     totalResultsReturned: null
