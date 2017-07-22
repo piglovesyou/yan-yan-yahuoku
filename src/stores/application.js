@@ -33,7 +33,7 @@ class Store extends ReduceStore {
         localStorage.setItem('v1.last_search_category_id', category.CategoryId);
         break;
 
-      case 'update_goods':
+      case 'load_first_page':
         const {
           goodsFetched,
           goodsMetadata,

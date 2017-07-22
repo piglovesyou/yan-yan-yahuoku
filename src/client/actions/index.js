@@ -59,7 +59,7 @@ async function executeQueryWithKeywords(
   const indexInFetched = 0;
   const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
   dispatch({
-    type: 'update_goods',
+    type: 'load_first_page',
     goodsFetched,
     goodsMetadata,
     indexInFetched,
@@ -90,54 +90,54 @@ async function goToNextGoods(isForward = true) {
       s.goodsCountInViewport, getLastPage(s.metaFetchedForward));
   console.log(yeah);
 
-  const from = isForward
-      ? s.indexInFetched + s.goodsCountInViewport
-      : s.indexInFetched - s.goodsCountInViewport;
-  const to = from + s.goodsCountInViewport;
-
-  const availableInFetched = isForward
-      ? to <= s.goodsFetched.length
-      : from >= 0;
-  if (availableInFetched) {
-    const goodsInViewport = s.goodsFetched.slice(from, to);
-    await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
-    dispatch({
-      type: 'update_goods',
-      goodsFetched: s.goodsFetched,
-      goodsMetadata: s.goodsMetadata,
-      indexInFetched: from,
-      goodsInViewport,
-    });
-    return;
-  }
-
-  const availableByFetching = isForward
-      ? m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable
-      : s.currentFetchedPage > 1;
-  if (availableByFetching) {
-    const nextPage = isForward
-        ? s.currentFetchedPage + 1
-        : s.currentFetchedPage - 1;
-
-    const json = await requestGoods(s.lastCategoryId, s.lastQueryKeywords, nextPage);
-    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-    const goodsInViewport = isForward
-        ? s.goodsFetched.concat(goodsFetched).slice(from, to)
-        : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
-    await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
-    dispatch({
-      type: 'update_goods',
-      goodsFetched,
-      goodsMetadata,
-      indexInFetched: isForward
-          ? to % s.goodsCountInViewport
-          : from + goodsFetched.length,
-      goodsInViewport,
-    });
-    // return;
-  }
-
-  // TODO: fetch the last few
+  // const from = isForward
+  //     ? s.indexInFetched + s.goodsCountInViewport
+  //     : s.indexInFetched - s.goodsCountInViewport;
+  // const to = from + s.goodsCountInViewport;
+  //
+  // const availableInFetched = isForward
+  //     ? to <= s.goodsFetched.length
+  //     : from >= 0;
+  // if (availableInFetched) {
+  //   const goodsInViewport = s.goodsFetched.slice(from, to);
+  //   await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
+  //   dispatch({
+  //     type: 'load_first_page',
+  //     goodsFetched: s.goodsFetched,
+  //     goodsMetadata: s.goodsMetadata,
+  //     indexInFetched: from,
+  //     goodsInViewport,
+  //   });
+  //   return;
+  // }
+  //
+  // const availableByFetching = isForward
+  //     ? m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable
+  //     : s.currentFetchedPage > 1;
+  // if (availableByFetching) {
+  //   const nextPage = isForward
+  //       ? s.currentFetchedPage + 1
+  //       : s.currentFetchedPage - 1;
+  //
+  //   const json = await requestGoods(s.lastCategoryId, s.lastQueryKeywords, nextPage);
+  //   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+  //   const goodsInViewport = isForward
+  //       ? s.goodsFetched.concat(goodsFetched).slice(from, to)
+  //       : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
+  //   await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
+  //   dispatch({
+  //     type: 'update_goods',
+  //     goodsFetched,
+  //     goodsMetadata,
+  //     indexInFetched: isForward
+  //         ? to % s.goodsCountInViewport
+  //         : from + goodsFetched.length,
+  //     goodsInViewport,
+  //   });
+  //   // return;
+  // }
+  //
+  // // TODO: fetch the last few
 }
 
 async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound,},
