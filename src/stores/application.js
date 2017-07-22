@@ -41,13 +41,24 @@ class Store extends ReduceStore {
           goodsInViewport
         } = action;
         const query = action.args && action.args.query;
+        const currentFetchedPage = Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned);
         newState = Object.assign({}, state, {
-          currentFetchedPage: Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned),
+          currentFetchedPage,
           goodsFetched,
           goodsMetadata,
           indexInFetched,
           goodsInViewport,
           lastQueryKeywords: query,
+
+          // Experiment
+          pageFetchedForward: currentFetchedPage,
+          itemsFetchedForward: goodsFetched,
+          indexInFetchedForward: indexInFetched,
+          metaFetchedForward: goodsMetadata,
+          pageFetchedBackward: currentFetchedPage,
+          itemsFetchedBackward: goodsFetched,
+          indexInFetchedBackward: indexInFetched,
+          metaFetchedBackward: goodsMetadata,
         });
         if (typeof query === 'string') {
           localStorage.setItem('v1.last_query_keywords', query);
