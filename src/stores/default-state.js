@@ -1,6 +1,5 @@
 module.exports.default = {
-  title: 'YYY',
-  category: null,
+  title: 'ヤンヤンヤフオク',
 
   displayName: null,
 
