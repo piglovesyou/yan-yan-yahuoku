@@ -25,7 +25,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             query: {
-              'presets': ['react', 'es2015'],
+              'presets': ['react'],
               'plugins': [
                 'transform-es2015-classes',
               ],

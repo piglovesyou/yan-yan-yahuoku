@@ -40,7 +40,7 @@ class Store extends ReduceStore {
           indexInFetched,
           goodsInViewport
         } = action;
-        const query = action.args && action.args.query;
+        const query = action.args ? action.args.query : state.lastQueryKeywords;
         const currentFetchedPage = Math.ceil(goodsMetadata.firstResultPosition / goodsMetadata.totalResultsReturned);
         newState = Object.assign({}, state, {
           currentFetchedPage,

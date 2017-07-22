@@ -78,16 +78,17 @@ async function goToNextGoods(isForward = true) {
   const s = store.getState();
   const m = s.goodsMetadata;
 
-  // collectAuctionItems({
-  //   collected: [],
-  //   pageOfFirstFound: null,
-  //   indexOfFirstFound: null,
-  // }, {
-  //   pageOfItem: s.currentFetchedPage,
-  //   indexOfItem: s.indexInFetched,
-  //   goodsMetadata: s.goodsMetadata,
-  // }, s.lastCategoryId, s.lastQueryKeywords, s.goodsFetched
-  // );
+  const yeah = await collectAuctionItems({
+    collected: [],
+    pageOfFirstFound: null,
+    indexOfFirstFound: null,
+  }, {
+    pageOfItem: s.currentFetchedPage,
+    indexOfItem: s.indexInFetched + s.goodsInViewport.length, // Next index to try
+    goodsMetadata: s.goodsMetadata,
+  }, s.lastCategoryId, s.lastQueryKeywords, s.goodsFetched, isForward,
+      s.goodsCountInViewport, getLastPage(s.metaFetchedForward));
+  console.log(yeah);
 
   const from = isForward
       ? s.indexInFetched + s.goodsCountInViewport
@@ -141,44 +142,46 @@ async function goToNextGoods(isForward = true) {
 
 async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound,},
                                    {pageOfItem, indexOfItem, goodsMetadata},
-                                   category, query, goodsFetched, isForward, goodsCountInViewport, lastPage) {
+                                   category, query, goodsFetched, isForward,
+                                   goodsCountInViewport, lastPage) {
+
   const gotEnough = collected.length >= goodsCountInViewport;
   if (gotEnough) return {collected, pageOfFirstFound, indexOfFirstFound};
 
-  const reachedToEnd = isForward && !goodsFetched[indexOfItem] && pageOfItem === lastPage;
+  const reachedToEnd = isForward && pageOfItem === lastPage && !goodsFetched[indexOfItem];
   if (reachedToEnd) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const reachedToBeginning = !isForward && pageOfItem < 0;
   if (reachedToBeginning) return {collected, pageOfFirstFound, indexOfFirstFound};
 
-  const nextIndex = indexOfItem + (isForward ? 1 : -1);
-
-  const existsInFetched = !!goodsFetched[nextIndex];
+  const existsInFetched = !!goodsFetched[indexOfItem];
   if (existsInFetched) {
     if (collected.length === 0) {
       pageOfFirstFound = pageOfItem;
       indexOfFirstFound = indexOfItem;
     }
-    collected.push(goodsFetched[nextIndex]);
+    collected.push(goodsFetched[indexOfItem]);
     return collectAuctionItems(
         {collected, pageOfFirstFound, indexOfFirstFound},
-        {pageOfItem, indexOfItem: nextIndex},
-        isForward, goodsFetched, goodsCountInViewport, lastPage);
+        {pageOfItem, indexOfItem: indexOfItem},
+        category, query, goodsFetched, isForward,
+        goodsCountInViewport, lastPage);
 
   } else {
     // Need to flip page
 
-    pageOfItem = pageOfItem + (isForward ? 1 : -1);
-
     indexOfItem = isForward ? 0 : goodsFetched.length - 1;
+
+    pageOfItem = pageOfItem + (isForward ? 1 : -1);
 
     const json = await requestGoods(category, query, pageOfItem);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
 
     return collectAuctionItems(
         {collected, pageOfFirstFound, indexOfFirstFound},
-        {pageOfItem, indexOfItem, goodsMetadata},
-        isForward, goodsFetched, goodsCountInViewport, lastPage);
+        {pageOfItem, indexOfItem},
+        category, query, goodsFetched, isForward,
+        goodsCountInViewport, lastPage);
   }
 }
 
@@ -219,4 +222,9 @@ function waitUntilImgPreloaded(src) {
 }
 function removeNode(el) {
   el.parentNode.removeChild(el);
+}
+
+function getLastPage(m) {
+  const perPage = 20;
+  return Math.ceil(m.totalResultsAvailable / perPage);
 }
