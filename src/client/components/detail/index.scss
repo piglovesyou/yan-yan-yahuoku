@@ -30,6 +30,23 @@ $h: 64px;
 .img {
   max-width: 100%;
 }
+.indicator {
+  margin-top: 4px;
+  text-align: center;
+  &__dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin: 0 8px;
+    border: 1px #ccc solid;
+    border-radius: 32px;
+    background-color: white;
+    &--selected {
+      background-color: #666;
+      border: 1px #666 solid;
+    }
+  }
+}
 
 .h2 {
   margin-left: 24px;

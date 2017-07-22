@@ -14,7 +14,8 @@ class Detal extends React.Component {
 
   render() {
     const i = this.props;
-    const imgSrc = i.Img[Object.keys(i.Img).sort()[this.state.imageIndex]];
+    const imgKeys = Object.keys(i.Img).sort();
+    const imgSrc = i.Img[imgKeys[this.state.imageIndex]];
     return (
         <div className={s.root}>
           <div className={s.toolbar}>
@@ -43,6 +44,11 @@ class Detal extends React.Component {
 
           <div className={s.images} onClick={this.flipImage}>
             <img className={s.img} src={imgSrc}/>
+          </div>
+          <div className={s.indicator}>
+            {imgKeys.map((_, i) => {
+              return <div className={s.indicatorDot + ' ' + (i === this.state.imageIndex ? s.indicatorDotSelected : '')}/>
+            })}
           </div>
 
           <h2 className={s.h2}>
