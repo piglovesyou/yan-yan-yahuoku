@@ -3,8 +3,6 @@ const webpack = require('webpack');
 const Path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const cssLoaderConfig = require('./_css-loader').default;
-const deepmerge = require('deepmerge');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 // TODO: enable "isProduction" in production
 
@@ -25,9 +23,15 @@ module.exports = {
           {
             loader: 'babel-loader',
             query: {
-              'presets': ['react'],
+              'presets': [
+                'react',
+                'es2015',
+                'es2016',
+                'es2017',
+              ],
               'plugins': [
                 'transform-es2015-classes',
+                'transform-runtime'
               ],
               'babelrc': false
             },
@@ -49,7 +53,12 @@ module.exports = {
     ]
   },
   plugins: [
+    // Shit plugin that doesn't parse es2015
+    isProduction && new webpack.optimize.UglifyJsPlugin(),
+
+    // Shit plugin that doesn't support "test" option
+    // isProduction && new UglifyEsPlugin({ test: /\.js$/ }),
+
     new ExtractTextPlugin('stylesheets/main.css'),
-    // isProduction && new UglifyJSPlugin(),
   ].filter(e => !!e),
 };
