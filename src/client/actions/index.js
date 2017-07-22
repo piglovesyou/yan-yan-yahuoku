@@ -72,16 +72,30 @@ async function requestAPI(endpoint, query) {
   return await res.json();
 }
 
-async function goToNextGoods(next = true) {
+async function goToNextGoods(isForward = true) {
   const s = store.getState();
   const m = s.goodsMetadata;
 
-  const from = next
+
+  // collectAuctionItems({
+  //   collected: [],
+  //   pageOfFirstFound: null,
+  //   indexOfFirstFound: null,
+  // }, {
+  //   pageOfItem: s.currentFetchedPage,
+  //   indexOfItem: s.indexInFetched,
+  //   goodsMetadata: s.goodsMetadata,
+  // }, s.lastCategoryId, s.lastQueryKeywords, s.goodsFetched
+  // );
+
+
+
+  const from = isForward
       ? s.indexInFetched + s.goodsCountInViewport
       : s.indexInFetched - s.goodsCountInViewport;
   const to = from + s.goodsCountInViewport;
 
-  const availableInFetched = next
+  const availableInFetched = isForward
       ? to <= s.goodsFetched.length
       : from >= 0;
   if (availableInFetched) {
@@ -97,17 +111,17 @@ async function goToNextGoods(next = true) {
     return;
   }
 
-  const availableByFetching = next
+  const availableByFetching = isForward
       ? m.firstResultPosition - 1 + s.goodsCountInViewport <= m.totalResultsAvailable
       : s.currentFetchedPage > 1;
   if (availableByFetching) {
-    const nextPage = next
+    const nextPage = isForward
         ? s.currentFetchedPage + 1
         : s.currentFetchedPage - 1;
 
     const json = await requestGoods(s.lastCategoryId, s.lastQueryKeywords, nextPage);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-    const goodsInViewport = next
+    const goodsInViewport = isForward
         ? s.goodsFetched.concat(goodsFetched).slice(from, to)
         : goodsFetched.concat(s.goodsFetched).slice(from + goodsFetched.length, to + goodsFetched.length);
     await Promise.all(goodsInViewport.map(i => waitUntilImgPreloaded(i.Img.Image1)));
@@ -115,7 +129,7 @@ async function goToNextGoods(next = true) {
       type: 'update_goods',
       goodsFetched,
       goodsMetadata,
-      indexInFetched: next
+      indexInFetched: isForward
           ? to % s.goodsCountInViewport
           : from + goodsFetched.length,
       goodsInViewport,
@@ -126,17 +140,17 @@ async function goToNextGoods(next = true) {
   // TODO: fetch the last few
 }
 
-async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound},
-                                   {pageOfItem, indexOfItem},
-                                   goodsFetched, isForward, goodsCountInViewport, lastPage) {
+async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound,},
+                                   {pageOfItem, indexOfItem, goodsMetadata},
+                                   category, query, goodsFetched, isForward, goodsCountInViewport, lastPage) {
   const gotEnough = acc.length >= goodsCountInViewport;
-  if (gotEnough) return {acc, pageOfItem, indexOfItem};
+  if (gotEnough) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const reachedToEnd = isForward && !goodsFetched[indexInFetched] && pageOfItem === lastPage;
-  if (reachedToEnd) return {acc, pageOfItem, indexOfItem};
+  if (reachedToEnd) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const reachedToBeginning = !isForward && pageOfItem < 0;
-  if (reachedToEnd) return {acc, pageOfItem, indexOfItem};
+  if (reachedToEnd) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const nextIndex = indexOfItem + (isForward ? 1 : -1);
 
@@ -144,9 +158,13 @@ async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFou
   if (needToFlipPage) {
     pageOfItem = pageOfItem + (isForward ? 1 : -1);
     indexOfItem = isForward ? 0 : goodsFetched.length - 1;
+
+    const json = await requestGoods(category, query, pageOfItem);
+    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+
     return collectAuctionItems(
         {collected, pageOfFirstFound, indexOfFirstFound},
-        {pageOfItem, indexOfItem},
+        {pageOfItem, indexOfItem, goodsMetadata},
         isForward, goodsFetched, goodsCountInViewport, lastPage);
   }
 

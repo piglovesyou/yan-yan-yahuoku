@@ -17,8 +17,28 @@ module.exports.default = {
     totalResultsReturned: null
   },
 
+
+  // Experiment
+  pageFetchedForward: 1,
+  itemsFetchedForward: [],
+  indexInFetchedForward: 0,
+  metaFetchedForward: {
+    firstResultPosition: null,
+    totalResultsAvailable: null,
+    totalResultsReturned: null
+  },
+  pageFetchedBackward: 1,
+  itemsFetchedBackward: [],
+  indexInFetchedBackward: 0,
+  metaFetchedBackward: {
+    firstResultPosition: null,
+    totalResultsAvailable: null,
+    totalResultsReturned: null
+  },
+
+
   selectedAuctionItem: null,
 
-  lastCategoryId: '',
-  lastQueryKeywords: '',
+  // lastCategoryId: null,
+  // lastQueryKeywords: '',
 };
