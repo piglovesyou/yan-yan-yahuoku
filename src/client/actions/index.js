@@ -42,8 +42,7 @@ async function selectSearchCategory(categoryId) {
   executeQueryWithKeywords(store.getState().lastQueryKeywords);
 }
 
-async function requestGoods(query, page = 1) {
-  const category = store.getState().lastCategoryId;
+async function requestGoods(category, query, page = 1) {
   // TODO: if empty query width categoryId=0, stop requesting because it causes 400
   return query
       ? await requestAPI('search', {category, query, page})
@@ -53,7 +52,7 @@ async function requestGoods(query, page = 1) {
 async function executeQueryWithKeywords(keywords = '') {
   const s = store.getState();
   const query = keywords.trim();
-  const json = await requestGoods(query);
+  const json = await requestGoods(store.getState().lastCategoryId, query);
   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
   const indexInFetched = 0;
   const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
@@ -106,7 +105,7 @@ async function goToNextGoods(next = true) {
         ? s.currentFetchedPage + 1
         : s.currentFetchedPage - 1;
 
-    const json = await requestGoods(s.lastQueryKeywords, nextPage);
+    const json = await requestGoods(s.lastCategoryId, s.lastQueryKeywords, nextPage);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
     const goodsInViewport = next
         ? s.goodsFetched.concat(goodsFetched).slice(from, to)
@@ -125,6 +124,45 @@ async function goToNextGoods(next = true) {
   }
 
   // TODO: fetch the last few
+}
+
+async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound},
+                                   {pageOfItem, indexOfItem},
+                                   goodsFetched, isForward, goodsCountInViewport, lastPage) {
+  const gotEnough = acc.length >= goodsCountInViewport;
+  if (gotEnough) return {acc, pageOfItem, indexOfItem};
+
+  const reachedToEnd = isForward && !goodsFetched[indexInFetched] && pageOfItem === lastPage;
+  if (reachedToEnd) return {acc, pageOfItem, indexOfItem};
+
+  const reachedToBeginning = !isForward && pageOfItem < 0;
+  if (reachedToEnd) return {acc, pageOfItem, indexOfItem};
+
+  const nextIndex = indexOfItem + (isForward ? 1 : -1);
+
+  const needToFlipPage = nextIndex < 0 || goodsFetched.length < nextIndex + 1;
+  if (needToFlipPage) {
+    pageOfItem = pageOfItem + (isForward ? 1 : -1);
+    indexOfItem = isForward ? 0 : goodsFetched.length - 1;
+    return collectAuctionItems(
+        {collected, pageOfFirstFound, indexOfFirstFound},
+        {pageOfItem, indexOfItem},
+        isForward, goodsFetched, goodsCountInViewport, lastPage);
+  }
+
+  if (goodsFetched[nextIndex]) {
+    if (collected.length === 0) {
+      pageOfFirstFound = pageOfItem;
+      indexOfFirstFound = indexOfItem;
+    }
+    collected.push(goodsFetched[nextIndex]);
+    return collectAuctionItems(
+        {collected, pageOfFirstFound, indexOfFirstFound},
+        {pageOfItem, indexOfItem: nextIndex},
+        isForward, goodsFetched, goodsCountInViewport, lastPage);
+  }
+
+  throw new Error('ok I\'m dumb');
 }
 
 function getGoodsFromJSON(json) {
