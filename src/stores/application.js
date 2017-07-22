@@ -1,7 +1,7 @@
 const dispatcher = require('../client/dispatcher/index').default;
 const {ReduceStore} = require('flux/utils');
 const justOnceStateInjector = require('./just-once-state-injector');
-const {asArray} = require('../utils/object');
+// const {asArray} = require('../utils/object');
 const defaultState = require('./default-state').default;
 
 class Store extends ReduceStore {
@@ -34,7 +34,6 @@ class Store extends ReduceStore {
         break;
 
       case 'update_goods':
-        // const items = asArray(action.json.ResultSet && action.json.ResultSet.Result.Item);
         const {
           goodsFetched,
           goodsMetadata,

@@ -39,7 +39,7 @@ async function selectSearchCategory(categoryId) {
     category: json.ResultSet.Result,
     args: {categoryId},
   });
-  executeQueryWithKeywords(store.getState().lastQueryKeywords);
+  executeQueryWithKeywords();
 }
 
 async function requestGoods(category, query, page = 1) {
@@ -49,10 +49,12 @@ async function requestGoods(category, query, page = 1) {
       : await requestAPI('categoryLeaf', {category, page});
 }
 
-async function executeQueryWithKeywords(keywords = '') {
+async function executeQueryWithKeywords(
+    keywords = store.getState().lastQueryKeywords,
+    category = store.getState().lastCategoryId) {
   const s = store.getState();
   const query = keywords.trim();
-  const json = await requestGoods(store.getState().lastCategoryId, query);
+  const json = await requestGoods(category, query);
   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
   const indexInFetched = 0;
   const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
@@ -76,7 +78,6 @@ async function goToNextGoods(isForward = true) {
   const s = store.getState();
   const m = s.goodsMetadata;
 
-
   // collectAuctionItems({
   //   collected: [],
   //   pageOfFirstFound: null,
@@ -87,8 +88,6 @@ async function goToNextGoods(isForward = true) {
   //   goodsMetadata: s.goodsMetadata,
   // }, s.lastCategoryId, s.lastQueryKeywords, s.goodsFetched
   // );
-
-
 
   const from = isForward
       ? s.indexInFetched + s.goodsCountInViewport
@@ -143,32 +142,19 @@ async function goToNextGoods(isForward = true) {
 async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFound,},
                                    {pageOfItem, indexOfItem, goodsMetadata},
                                    category, query, goodsFetched, isForward, goodsCountInViewport, lastPage) {
-  const gotEnough = acc.length >= goodsCountInViewport;
+  const gotEnough = collected.length >= goodsCountInViewport;
   if (gotEnough) return {collected, pageOfFirstFound, indexOfFirstFound};
 
-  const reachedToEnd = isForward && !goodsFetched[indexInFetched] && pageOfItem === lastPage;
+  const reachedToEnd = isForward && !goodsFetched[indexOfItem] && pageOfItem === lastPage;
   if (reachedToEnd) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const reachedToBeginning = !isForward && pageOfItem < 0;
-  if (reachedToEnd) return {collected, pageOfFirstFound, indexOfFirstFound};
+  if (reachedToBeginning) return {collected, pageOfFirstFound, indexOfFirstFound};
 
   const nextIndex = indexOfItem + (isForward ? 1 : -1);
 
-  const needToFlipPage = nextIndex < 0 || goodsFetched.length < nextIndex + 1;
-  if (needToFlipPage) {
-    pageOfItem = pageOfItem + (isForward ? 1 : -1);
-    indexOfItem = isForward ? 0 : goodsFetched.length - 1;
-
-    const json = await requestGoods(category, query, pageOfItem);
-    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-
-    return collectAuctionItems(
-        {collected, pageOfFirstFound, indexOfFirstFound},
-        {pageOfItem, indexOfItem, goodsMetadata},
-        isForward, goodsFetched, goodsCountInViewport, lastPage);
-  }
-
-  if (goodsFetched[nextIndex]) {
+  const existsInFetched = !!goodsFetched[nextIndex];
+  if (existsInFetched) {
     if (collected.length === 0) {
       pageOfFirstFound = pageOfItem;
       indexOfFirstFound = indexOfItem;
@@ -177,6 +163,21 @@ async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFou
     return collectAuctionItems(
         {collected, pageOfFirstFound, indexOfFirstFound},
         {pageOfItem, indexOfItem: nextIndex},
+        isForward, goodsFetched, goodsCountInViewport, lastPage);
+
+  } else {
+    // Need to flip page
+
+    pageOfItem = pageOfItem + (isForward ? 1 : -1);
+
+    indexOfItem = isForward ? 0 : goodsFetched.length - 1;
+
+    const json = await requestGoods(category, query, pageOfItem);
+    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+
+    return collectAuctionItems(
+        {collected, pageOfFirstFound, indexOfFirstFound},
+        {pageOfItem, indexOfItem, goodsMetadata},
         isForward, goodsFetched, goodsCountInViewport, lastPage);
   }
 

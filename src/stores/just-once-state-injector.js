@@ -9,6 +9,6 @@ module.exports.consume = () => {
   return undefined;
 };
 
-module.exports.set = (value) => {
+module.exports.set = value => {
   valueForOnce = value;
 };
