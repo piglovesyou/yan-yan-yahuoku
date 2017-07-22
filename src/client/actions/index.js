@@ -2,6 +2,7 @@ const {dispatch} = require('../dispatcher');
 const qs = require('querystring');
 const store = require('../../stores/application').default;
 const {asArray} = require('../../utils/object');
+const COUNT_PER_PAGE = 20; // Auction API rule
 
 module.exports = {
   selectSearchCategory,
@@ -88,16 +89,26 @@ async function goToNextGoods(isForward = true) {
     metaOfLastItem,
     indexOfLastItem,
   } = await collectAuctionItems({
-        collected: [],
-        pageOfFirstFound: null,
-        indexOfFirstFound: null,
+        collected: undefined,
+        pageOfFirstItem: undefined,
+        itemsOfFirstItem: undefined,
+        metaOfFirstItem: undefined,
+        indexOfFirstItem: undefined,
+        pageOfLastItem: undefined,
+        itemsOfLastItem: undefined,
+        metaOfLastItem: undefined,
+        indexOfLastItem: undefined,
       },
-      isForward ? s.pageOfLastItem : s.pageOfFirstFound,
+      isForward ? s.pageOfLastItem : s.pageOfFirstItem,
       isForward ? s.itemsOfLastItem : s.itemsOfFirstItem,
       isForward ? s.metaOfLastItem : s.metaOfFirstItem,
       isForward ? s.indexOfLastItem + 1 : s.indexOfFirstItem - 1, // Next index to try
       s.lastCategoryId, s.lastQueryKeywords, isForward,
       s.goodsCountInViewport, getLastPage(s.metaOfFirstItem));
+
+  if (!collected) {
+    return;
+  }
 
   await Promise.all(collected.map(i => waitUntilImgPreloaded(i.Img.Image1)));
 
@@ -115,6 +126,7 @@ async function goToNextGoods(isForward = true) {
       indexOfLastItem,
     });
   } else {
+    collected.reverse();
     dispatch({
       type: 'update_goods_index',
       goodsInViewport: collected,
@@ -210,29 +222,28 @@ async function collectAuctionItems(accumulator,
     indexOfLastItem,
   } = accumulator;
 
-  const gotEnough = collected.length >= goodsCountInViewport;
-  const reachedToEnd = !gotEnough &&
-      (pageOfItem < 0 || (lastPage <= pageOfItem && !itemsOfItem[indexOfItem]));
+  const gotEnough = collected && collected.length >= goodsCountInViewport;
+  const reachedToEdge = !gotEnough && (
+      (!isForward && pageOfItem < 1) ||
+      (isForward && lastPage <= pageOfItem && !itemsOfItem[indexOfItem]));
 
-  if (gotEnough || reachedToEnd) return accumulator;
-
-  const reachedToBeginning = !isForward && pageOfItem < 0;
-  if (reachedToBeginning) return {collected, pageOfFirstItem, indexOfFirstItem};
+  if (gotEnough || reachedToEdge) return accumulator;
 
   const existsInFetched = !!itemsOfItem[indexOfItem];
   if (existsInFetched) {
-    if (collected.length === 0) {
+    if (!collected) {
+      collected = [];
       pageOfFirstItem = pageOfItem;
       itemsOfFirstItem = itemsOfItem;
-      metaOfFirstItem = itemsOfItem;
+      metaOfFirstItem = goodsMetadata;
       indexOfFirstItem = indexOfItem;
     }
 
     // Update everytime to catch the last page and index
     pageOfLastItem = pageOfItem;
     itemsOfLastItem = itemsOfItem;
-    metaOfLastItem =
-        indexOfLastItem = indexOfItem;
+    metaOfLastItem = goodsMetadata;
+    indexOfLastItem = indexOfItem;
 
     collected.push(itemsOfItem[indexOfItem]);
     return collectAuctionItems(
@@ -254,9 +265,14 @@ async function collectAuctionItems(accumulator,
   } else {
     // Flip page
 
-    indexOfItem = isForward ? 0 : itemsOfItem.length - 1;
+    indexOfItem = isForward ? 0 : COUNT_PER_PAGE - 1;
 
     pageOfItem = pageOfItem + (isForward ? 1 : -1);
+    if (pageOfItem <= 0) {
+      // Auction API returns the same items with page "1" and "0".
+      // We don't want results of page "0" so we'll finish it.
+      return undefined;
+    }
 
     const json = await requestGoods(category, query, pageOfItem);
     const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
@@ -319,6 +335,5 @@ function removeNode(el) {
 }
 
 function getLastPage(m) {
-  const perPage = 20;
-  return Math.ceil(m.totalResultsAvailable / perPage);
+  return Math.ceil(m.totalResultsAvailable / COUNT_PER_PAGE);
 }

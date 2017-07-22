@@ -58,7 +58,7 @@ class Store extends ReduceStore {
           metaOfFirstItem: goodsMetadata,
           pageOfLastItem: currentFetchedPage,
           itemsOfLastItem: goodsFetched,
-          indexOfLastItem: indexInFetched,
+          indexOfLastItem: indexInFetched + goodsInViewport.length - 1,
           metaOfLastItem: goodsMetadata,
         });
         if (typeof query === 'string') {
