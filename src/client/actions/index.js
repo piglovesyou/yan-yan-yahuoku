@@ -42,7 +42,7 @@ async function selectSearchCategory(categoryId) {
   executeQueryWithKeywords();
 }
 
-async function requestGoods(category, query, page = 1) {
+async function requestGoods(category, query, page) {
   // TODO: if empty query width categoryId=0, stop requesting because it causes 400
   return query
       ? await requestAPI('search', {category, query, page})
@@ -54,7 +54,7 @@ async function executeQueryWithKeywords(
     category = store.getState().lastCategoryId) {
   const s = store.getState();
   const query = keywords.trim();
-  const json = await requestGoods(category, query);
+  const json = await requestGoods(category, query, 1);
   const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
   const indexInFetched = 0;
   const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
@@ -180,8 +180,6 @@ async function collectAuctionItems({collected, pageOfFirstFound, indexOfFirstFou
         {pageOfItem, indexOfItem, goodsMetadata},
         isForward, goodsFetched, goodsCountInViewport, lastPage);
   }
-
-  throw new Error('ok I\'m dumb');
 }
 
 function getGoodsFromJSON(json) {
