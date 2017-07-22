@@ -1,11 +1,5 @@
 @import "../../sass/_base-layout";
 
-.root {
-  @extend %l-flex-expand;
-
-  @extend %l-flex-container;
-}
-
 .main-viewport {
   @extend %l-flex-expand;
 

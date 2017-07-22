@@ -37,7 +37,7 @@ class Application extends React.Component {
   render() {
     const routeClassName = this.props.location ? 'route-' + getRouteName(this.props.location.pathname) : '';
     return (
-          <Sidebar.Pushable className={s.root}>
+          <Sidebar.Pushable>
             <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
                      vertical inverted>
 

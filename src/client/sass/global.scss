@@ -1,7 +1,10 @@
 @import "_base-layout";
 
 :global(html),
-:global(body) {
+:global(body),
+:global(#application-container),
+:global(#application-container) > :global(.pushable) {
+  width: 100%;
   height: 100%;
 }
 
@@ -14,8 +17,10 @@
 :global(#application-container) {
   @extend %l-flex-expand;
   @extend %l-flex-container;
-  width: 100%;
   margin: 0;
+  > :global(.pushable) {
+    display: flex;
+  }
 }
 
 :global([tabindex]) {
