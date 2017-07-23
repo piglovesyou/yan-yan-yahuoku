@@ -1,11 +1,19 @@
 @import "_base-layout";
 
-:global(html),
-:global(body),
-:global(#application-container),
-:global(#application-container) > :global(.pushable) {
+:global(body) {
+  height: auto;
+}
+
+:global(.route-home),
+:global(.route-home #application-container),
+:global(.route-home #application-container .pushable) {
   width: 100%;
   height: 100%;
+}
+
+:global(.route-items .pushable),
+:global(.route-about .pushable) {
+  height: auto;
 }
 
 :global(body) {

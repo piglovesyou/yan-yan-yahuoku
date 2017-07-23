@@ -11,8 +11,9 @@ const {selectSearchCategory, loadFirstPage} = require('../../actions');
 const BottomBar = require('../bottom-bar').default;
 const Home = require('../home').default;
 const Detail = require('../detail').default;
+const {createBodyClassNameFromPathName} = require('../../../utils');
 
-const {Route, Switch, IndexRoute, BrowserRouter, Match, Link} = require('react-router-dom');
+const {Route, Switch, Link} = require('react-router-dom');
 
 class Application extends React.Component {
   constructor(props) {
@@ -37,35 +38,41 @@ class Application extends React.Component {
   render() {
     const routeClassName = this.props.location ? 'route-' + getRouteName(this.props.location.pathname) : '';
     return (
-          <Sidebar.Pushable>
-            <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
-                     vertical inverted>
+        <Sidebar.Pushable>
+          <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
+                   vertical inverted>
 
-              <Menu.Item name='home' className={s.sideMenuItem}>
-                <Link to="/" onClick={this.closeSidemenu} className={s.sideMenuItemLink}><Icon name='home'/> Home</Link>
-              </Menu.Item>
+            <Menu.Item name='home' className={s.sideMenuItem}>
+              <Link to="/" onClick={this.closeSidemenu} className={s.sideMenuItemLink}><Icon name='home'/> Home</Link>
+            </Menu.Item>
 
-              <Menu.Item name='about' className={s.sideMenuItem}>
-                <Link to="/about" onClick={this.closeSidemenu}><Icon name='info'/> About</Link>
-              </Menu.Item>
-            </Sidebar>
+            <Menu.Item name='about' className={s.sideMenuItem}>
+              <Link to="/about" onClick={this.closeSidemenu}><Icon name='info'/> About</Link>
+            </Menu.Item>
+          </Sidebar>
 
-            <Sidebar.Pusher dimmed={this.state.isSidebarVisible}
-                            className={s.mainViewport + ' ' + routeClassName}
-                            onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
-            >
+          <Sidebar.Pusher dimmed={this.state.isSidebarVisible}
+                          className={s.mainViewport + ' ' + routeClassName}
+                          onClick={() => this.state.isSidebarVisible && this.closeSidemenu()}
+          >
 
-              <Switch>
-                {/*refactor*/}
-                <Route exact path="/" component={() => <Home toggleSidemenu={this.toggleSidemenu} {...Object.assign({}, this.state, this.props)}/>}/>
-                <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu} />}/>
-                <Route exact path="/items/:id" component={() => <Detail {...Object.assign({}, this.state.selectedAuctionItem, this.props)} />}/>
-              </Switch>
+            <Switch>
+              {/*refactor*/}
+              <Route exact path="/" component={() => <Home
+                  toggleSidemenu={this.toggleSidemenu} {...Object.assign({}, this.state, this.props)}/>}/>
+              <Route exact path="/about" component={() => <About toggleSidemenu={this.toggleSidemenu}/>}/>
+              <Route exact path="/items/:id"
+                     component={() => <Detail {...Object.assign({}, this.state.selectedAuctionItem, this.props)} />}/>
+            </Switch>
 
-            </Sidebar.Pusher>
+          </Sidebar.Pusher>
 
-          </Sidebar.Pushable>
+        </Sidebar.Pushable>
     );
+  }
+
+  componentDidUpdate() {
+    document.body.className = createBodyClassNameFromPathName(this.props.history.location.pathname);
   }
 
   toggleSidemenu() {
@@ -80,6 +87,7 @@ class Application extends React.Component {
 module.exports.default = Container.create(Application);
 
 const lengthToIgnoreForPathname = '/'.length;
+
 function getRouteName(pathname) {
   return pathname.slice(lengthToIgnoreForPathname,
       pathname.indexOf('/', lengthToIgnoreForPathname));

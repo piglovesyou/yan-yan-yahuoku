@@ -1,9 +1,10 @@
 const FS = require('fs');
 const Path = require('path');
-const deepmerge = require('deepmerge');
+// const deepmerge = require('deepmerge');
 const babelrc = JSON.parse(FS.readFileSync(Path.resolve(__dirname, '../../../.babelrc')));
 const {isProduction} = require('../env');
 const {requestAuctionItem} = require('./api');
+const {createBodyClassNameFromPathName} = require('../../utils');
 
 if (!isProduction) {
   // Applied only for JSXs in '../components'
@@ -47,6 +48,7 @@ async function defaultRouteMiddleware(req, res) {
   const data = Object.assign({}, defaultState, {
     displayName: req.user && req.user.displayName,
     selectedAuctionItem,
+    bodyClassName: createBodyClassNameFromPathName(req.url),
   });
 
   require('../../stores/just-once-state-injector').set(data);
