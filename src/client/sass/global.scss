@@ -4,11 +4,17 @@
   height: auto;
 }
 
-:global(.route-home),
-:global(.route-home #application-container),
-:global(.route-home #application-container .pushable) {
+:global(#application-container),
+:global(#application-container .pushable) {
   width: 100%;
-  height: 100%;
+}
+
+:global(.route-home) {
+  &,
+  :global(#application-container),
+  :global(#application-container .pushable) {
+    height: 100%;
+  }
 }
 
 :global(.route-items .pushable),
