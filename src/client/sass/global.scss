@@ -2,6 +2,7 @@
 
 :global(body) {
   height: auto;
+  min-height: 100%;
 }
 
 :global(#application-container),
@@ -47,6 +48,10 @@
 
 :global(.route-items) {
   overflow: auto !important;
+}
+
+:global(input[type=search]) {
+  -webkit-appearance:initial;
 }
 
 :global(#img-preloader) {

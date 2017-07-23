@@ -14,6 +14,7 @@
   $max-parent-width: 6rem;
   display: inline-block;
   margin-right: 16px;
+  min-width: 6em;
   vertical-align: middle;
   &__parent-category {
     display: inline-block;
@@ -50,7 +51,7 @@
 .query-keywords-input {
   flex: 1;
   max-width: 8em;
-  margin: 8px 0;
+  margin: 8px 8px 8px 0;
   padding: 4px;
   border: none;
   font-size: 2rem;

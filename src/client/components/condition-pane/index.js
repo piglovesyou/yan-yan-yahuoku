@@ -81,7 +81,7 @@ class ConditionPane extends React.Component {
           <form className={s.form} onSubmit={onSubmit.bind(this)}>
             <CategoryPath {...this.props}/>
             {/*<Icon name="caret right"/>*/}
-            <input ref="queryKeywordsInput"
+            <input type="search" ref="queryKeywordsInput"
                    className={s.queryKeywordsInput}
                    placeholder="検索キーワード"
                    value={this.state.queryKeywordsInputValue}
