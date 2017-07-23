@@ -62,3 +62,7 @@
   bottom: -1px;
   right: -1px;
 }
+
+:global(.pushable>.pusher:after) {
+  background-color: rgba(0,0,0,0.1);
+}

@@ -40,7 +40,7 @@ class Application extends React.Component {
     return (
         <Sidebar.Pushable>
           <Sidebar as={Menu} animation='overlay' width='thin' visible={this.state.isSidebarVisible} icon='labeled'
-                   vertical inverted>
+                   vertical>
 
             <Menu.Item name='home' className={s.sideMenuItem}>
               <Link to="/" onClick={this.closeSidemenu} className={s.sideMenuItemLink}><Icon name='home'/> Home</Link>

@@ -1,5 +1,9 @@
 @import "../../sass/_base-layout";
 
+.root {
+  margin-bottom: 64px;
+}
+
 .toolbar {
   @extend %l-flex-container;
 }

@@ -24,7 +24,6 @@ module.exports.default = function About(props) {
           </ul>
           <p>ヤンヤンヤフオクは、<a href="https://twitter.com/takamura_so">私</a>が特定のカテゴリの新着商品を効率的に巡回するために作られました。あなたにも役立つよう作ったつもりですが、万が一損害を与えてしまっても私は一切責任を取りません。</p>
 
-          <p>ヤンヤンヤフオクはYahoo! オークションWeb API を利用して作られました。</p>
           <p>
             <a href="https://developer.yahoo.co.jp/about">
               <img src="https://s.yimg.jp/images/yjdn/yjdn_attbtn1_125_17.gif" title="Webサービス by Yahoo! JAPAN"
@@ -32,6 +31,7 @@ module.exports.default = function About(props) {
                    className={s.yapiLinkImg}/>
             </a>
           </p>
+          <p>ヤンヤンヤフオクはYahoo! オークションWeb API を利用して作られました。</p>
 
         </div>
       </div>
