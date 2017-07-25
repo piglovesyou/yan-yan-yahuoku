@@ -10,8 +10,9 @@ class BottomBar extends React.Component {
 
   render() {
     return (
-        <div className={s.root}>
-          {/*<div className={s.history}> <Icon name="history"/> </div>*/}
+        <div className={s.root + ' ' +
+        (this.props.isLeftEdge ? s.rootIsLeftEdge : '') + ' ' +
+        (this.props.isRightEdge ? s.rootIsRightEdge : '')}>
           <div className={s.goBack} onClick={goToNextGoods.bind(null, false)}>
             <Icon name="arrow left"/>
           </div>

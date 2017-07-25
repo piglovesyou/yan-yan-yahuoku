@@ -2,6 +2,8 @@ module.exports.default = {
   title: 'ヤンヤンヤフオク',
 
   displayName: null,
+  isLeftEdge: false,
+  isRightEdge: false,
 
   goodsCountInViewport: 4,
   goodsInViewport: [], // To render

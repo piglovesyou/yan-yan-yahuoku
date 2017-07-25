@@ -25,14 +25,16 @@ module.exports = {
             query: {
               'presets': [
                 'react',
+              ].concat(isProduction ? [
                 'es2015',
                 'es2016',
                 'es2017',
-              ],
+              ] : []),
               'plugins': [
                 'transform-es2015-classes',
+              ].concat(isProduction ? [
                 'transform-runtime'
-              ],
+              ] : []),
               'babelrc': false
             },
           },

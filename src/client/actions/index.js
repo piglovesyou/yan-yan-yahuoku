@@ -53,18 +53,46 @@ async function requestAuctionItems(category, query, page) {
 async function loadFirstPage(keywords = store.getState().lastQueryKeywords,
                              category = store.getState().lastCategoryId) {
   const s = store.getState();
-  const query = keywords.trim();
-  const json = await requestAuctionItems(category, query, 1);
-  const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
-  const indexInFetched = 0;
-  const goodsInViewport = goodsFetched.slice(indexInFetched, indexInFetched + s.goodsCountInViewport);
-  const {totalResultsAvailable} = goodsMetadata;
-  dispatch({
-    type: 'load_first_page',
+
+  const {
+    collected,
+    pageOfFirstItem,
+    itemsOfFirstItem,
+    indexOfFirstItem,
+    pageOfLastItem,
+    itemsOfLastItem,
+    indexOfLastItem,
+    isRightEdge,
     totalResultsAvailable,
-    goodsFetched,
-    goodsInViewport,
-    args: {query}
+  } = await collectAuctionItems({
+        collected: undefined,
+        pageOfFirstItem: undefined,
+        itemsOfFirstItem: undefined,
+        indexOfFirstItem: undefined,
+        pageOfLastItem: undefined,
+        itemsOfLastItem: undefined,
+        indexOfLastItem: undefined,
+        isRightEdge: false,
+        totalResultsAvailable: undefined,
+      },
+      0, [], 0,
+      category, keywords, true,
+      s.goodsCountInViewport, undefined);
+
+  dispatch({
+    type: 'update_goods_index',
+    goodsInViewport: collected,
+    pageOfFirstItem,
+    itemsOfFirstItem,
+    indexOfFirstItem,
+    pageOfLastItem,
+    itemsOfLastItem,
+    indexOfLastItem,
+    isLeftEdge: true,
+    isRightEdge,
+    totalResultsAvailable,
+    lastCategoryId: category,
+    lastQueryKeywords: keywords,
   });
 }
 
@@ -79,6 +107,8 @@ async function goToNextGoods(isForward = true) {
     pageOfLastItem,
     itemsOfLastItem,
     indexOfLastItem,
+    isLeftEdge,
+    isRightEdge,
   } = await collectAuctionItems({
         collected: undefined,
         pageOfFirstItem: undefined,
@@ -87,6 +117,8 @@ async function goToNextGoods(isForward = true) {
         pageOfLastItem: undefined,
         itemsOfLastItem: undefined,
         indexOfLastItem: undefined,
+        isLeftEdge: false,
+        isRightEdge: false,
       },
       isForward ? s.pageOfLastItem : s.pageOfFirstItem,
       isForward ? s.itemsOfLastItem : s.itemsOfFirstItem,
@@ -98,7 +130,7 @@ async function goToNextGoods(isForward = true) {
     return;
   }
 
-  await Promise.all(collected.map(i => waitUntilImgPreloaded(i.Img.Image1)));
+  await Promise.all(collected.map(i => waitUntilImgPreloaded(i.Img && i.Img.Image1 || i.Image)));
 
   if (isForward) {
     dispatch({
@@ -110,6 +142,8 @@ async function goToNextGoods(isForward = true) {
       pageOfLastItem,
       itemsOfLastItem,
       indexOfLastItem,
+      isLeftEdge,
+      isRightEdge,
     });
   } else {
     collected.reverse();
@@ -122,6 +156,8 @@ async function goToNextGoods(isForward = true) {
       pageOfLastItem: pageOfFirstItem,
       itemsOfLastItem: itemsOfFirstItem,
       indexOfLastItem: indexOfFirstItem,
+      isLeftEdge,
+      isRightEdge,
     });
   }
 }
@@ -138,14 +174,28 @@ async function collectAuctionItems(accumulator,
     pageOfLastItem,
     itemsOfLastItem,
     indexOfLastItem,
+    isLeftEdge,
+    isRightEdge,
+    totalResultsAvailable,
   } = accumulator;
 
   const gotEnough = collected && collected.length >= goodsCountInViewport;
-  const reachedToEdge = !gotEnough && (
-      (!isForward && pageOfItem < 1) ||
-      (isForward && lastPage <= pageOfItem && !itemsOfItem[indexOfItem]));
 
-  if (gotEnough || reachedToEdge) return accumulator;
+  isLeftEdge = !isForward && pageOfItem <= 1 && indexOfItem < 0;
+  isRightEdge = isForward &&lastPage && lastPage <= pageOfItem && !itemsOfItem[indexOfItem];
+
+  if (gotEnough || isLeftEdge || isRightEdge) return {
+    collected,
+    pageOfFirstItem,
+    itemsOfFirstItem,
+    indexOfFirstItem,
+    pageOfLastItem,
+    itemsOfLastItem,
+    indexOfLastItem,
+    isLeftEdge,
+    isRightEdge,
+    totalResultsAvailable,
+  };
 
   const existsInFetched = !!itemsOfItem[indexOfItem];
   if (existsInFetched) {
@@ -173,11 +223,27 @@ async function collectAuctionItems(accumulator,
     if (pageOfItem <= 0) {
       // Auction API returns the same items with page "1" and "0".
       // We don't want results of page "0" so we'll finish it.
-      return accumulator;
+      return {
+        collected,
+        pageOfFirstItem,
+        itemsOfFirstItem,
+        indexOfFirstItem,
+        pageOfLastItem,
+        itemsOfLastItem,
+        indexOfLastItem,
+        isLeftEdge,
+        isRightEdge,
+        totalResultsAvailable,
+      };
     }
 
     const json = await requestAuctionItems(category, query, pageOfItem);
-    const {goodsFetched} = getGoodsFromJSON(json);
+    const {goodsFetched, goodsMetadata} = getGoodsFromJSON(json);
+    totalResultsAvailable = goodsMetadata.totalResultsAvailable;
+    if (!lastPage) {
+      // On loading the first page
+      lastPage = getLastPage(totalResultsAvailable);
+    }
     itemsOfItem = goodsFetched;
   }
 
@@ -189,6 +255,9 @@ async function collectAuctionItems(accumulator,
         pageOfLastItem,
         itemsOfLastItem,
         indexOfLastItem,
+        isLeftEdge,
+        isRightEdge,
+        totalResultsAvailable,
       },
       pageOfItem, itemsOfItem, indexOfItem,
       category, query, isForward,

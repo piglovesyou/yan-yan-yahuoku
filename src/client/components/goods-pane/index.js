@@ -21,12 +21,14 @@ class GoodsPane extends React.Component {
         <div className={`${s.root}${className ? ' ' + className : ''}`}>
           {
             goodsInViewport.map((g, index) => {
+              const imgSrc = g.Img && g.Img.Image1 || g.Image;
               return (
                   <div className={s.item}
+                       title={g.Title}
                        onClick={selectAuctionItem.bind(null, g, this.props.history)}
                        key={g.AuctionID}>
-                    <img className={s.img + ' ' + (isImageLandscape(g.Img.Image1) ? s.imgLandscape : s.imgPortlate)}
-                         key={g.AuctionID} src={g.Img.Image1 || g.Image}/>
+                    <img className={s.img + ' ' + (isImageLandscape(imgSrc) ? s.imgLandscape : s.imgPortlate)}
+                         key={g.AuctionID} src={imgSrc}/>
                   </div>
               );
             })
